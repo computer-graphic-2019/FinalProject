@@ -19,12 +19,12 @@
 #include <map>
 
 #include "stb_image.h"
-/*
-class Texture {
+
+class MY_Texture {
 private:
 	unsigned int textureNum;
 public:
-	Texture(char const * path){
+	MY_Texture(char const * path){
 		this->textureNum = loadTexture(path);
 	}
 
@@ -68,5 +68,5 @@ public:
 		return textureID;
 	}
 };
-*/
+
 #endif

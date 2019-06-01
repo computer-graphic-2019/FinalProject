@@ -6,7 +6,7 @@
 #include <gtc/type_ptr.hpp>
 
 #include "Camera.h"
-#include "model.h"
+#include "Resource.h"
 
 #include <iostream>
 
@@ -24,6 +24,10 @@ Camera camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
+
+
+//Resouce Handler
+ResourceManager ResM;
 
 // timing
 float deltaTime = 0.0f;
@@ -77,7 +81,8 @@ int main()
 
     // load models
     // -----------
-    Model ourModel("./nanosuit/nanosuit.obj");
+    //Model ourModel("./models/gun/gun_update.obj");
+	ResM.loadModel("gun", "./models/gun/gun_update.obj");
 
     
     // draw in wireframe
@@ -116,7 +121,8 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
+        //ourModel.Draw(ourShader);
+		ResM.getModel("gun")->Draw(ourShader);
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
