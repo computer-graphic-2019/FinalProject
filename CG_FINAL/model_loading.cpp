@@ -77,12 +77,12 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader ourShader("./1.model_loading.vs", "./1.model_loading.fs");
-
+    //Shader ourShader("./1.model_loading.vs", "./1.model_loading.fs");
+	ResM.loadShader("model", "./1.model_loading.vs", "./1.model_loading.fs");
     // load models
     // -----------
     //Model ourModel("./models/gun/gun_update.obj");
-	ResM.loadModel("gun", "./models/gun/gun_update.obj");
+	ResM.loadModel("gun", "./models/target/target.obj");
 
     
     // draw in wireframe
@@ -108,21 +108,22 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
-        ourShader.use();
+        //ourShader.use();
+		ResM.getShader("model")->use();
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.getView();
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
+		ResM.getShader("model")->setMat4("projection", projection);
+		ResM.getShader("model")->setMat4("view", view);
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-        ourShader.setMat4("model", model);
+		ResM.getShader("model")->setMat4("model", model);
         //ourModel.Draw(ourShader);
-		ResM.getModel("gun")->Draw(ourShader);
+		ResM.getModel("gun")->Draw((*ResM.getShader("model")));
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
