@@ -45,9 +45,6 @@
     <ClInclude Include="model.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -58,6 +55,21 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameResource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMove.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameShoot.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTools.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

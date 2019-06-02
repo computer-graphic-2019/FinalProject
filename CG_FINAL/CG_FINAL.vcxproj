@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{B7AD628B-CC5D-40A9-87AF-4AD3D4D5858B}</ProjectGuid>
     <RootNamespace>CGFINAL</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>F:\assimp-4.1.0\assimp-4.1.0\include;F:\OpenGL\glm;F:\OpenGL\glew-2.1.0-win32\glew-2.1.0\include;F:\OpenGL\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\include;F:\OpenGL\glad\include;$(IncludePath)</IncludePath>
-    <LibraryPath>F:\OpenGL\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\lib-vc2015;F:\assimp-4.1.0\assimp-4.1.0\mybuild\code\Debug;F:\OpenGL\glew-2.1.0-win32\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\Program Files\Assimp\include;F:\OpenGL\glm;F:\OpenGL\glew-2.1.0-win32\glew-2.1.0\include;F:\OpenGL\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\include;F:\OpenGL\glad\include;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\OpenGL\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\lib-vc2015;E:\Program Files\Assimp\lib\x86;F:\OpenGL\glew-2.1.0-win32\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -81,7 +81,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Link>
       <IgnoreSpecificDefaultLibraries>MSVCRT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -125,6 +125,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="GameMove.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameResource.h" />
+    <ClInclude Include="GameShoot.h" />
+    <ClInclude Include="GameTools.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_glfw.h" />
@@ -135,7 +140,6 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="model.h" />
-    <ClInclude Include="Resource.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />

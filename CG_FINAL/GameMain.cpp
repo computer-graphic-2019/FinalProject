@@ -6,7 +6,7 @@
 #include <gtc/type_ptr.hpp>
 
 #include "Camera.h"
-#include "Resource.h"
+#include "GameResource.h"
 
 #include <iostream>
 
@@ -84,7 +84,7 @@ int main()
     // load models
     // -----------
     //Model ourModel("./models/gun/gun_update.obj");
-	ResM.loadModel("gun", "./models/target/target.obj");
+	ResM.loadModel("gun", "./models/place/scene.obj");
 
     
     // draw in wireframe
@@ -122,7 +122,7 @@ int main()
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+        //model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
 		ResM.getShader("model")->setMat4("model", model);
         //ourModel.Draw(ourShader);
 		ResM.getModel("gun")->Draw((*ResM.getShader("model")));
