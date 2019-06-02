@@ -331,4 +331,6 @@ ASALocalRun/
 
 # config
 CG_FINAL.sln
-CG_FINAL/CG_FINAL.*
+CG_FINAL.vcxproj.user
+CG_FINAL.vcxproj.filters
+CG_FINAL.vcxproj
