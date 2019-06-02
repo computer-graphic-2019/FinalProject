@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>E:\Program Files\Assimp\include;F:\OpenGL\glm;F:\OpenGL\glew-2.1.0-win32\glew-2.1.0\include;F:\OpenGL\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\include;F:\OpenGL\glad\include;$(IncludePath)</IncludePath>
-    <LibraryPath>F:\OpenGL\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\lib-vc2015;E:\Program Files\Assimp\lib\x86;F:\OpenGL\glew-2.1.0-win32\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\Assimp\include;E:\320work\homework\计算机图形学\project_env\glm;E:\320work\homework\计算机图形学\project_env\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\include;E:\320work\homework\计算机图形学\project_env\glad\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\320work\homework\计算机图形学\project_env\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\lib-vc2015;C:\Program Files\Assimp\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -81,7 +81,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Link>
       <IgnoreSpecificDefaultLibraries>MSVCRT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
