@@ -83,10 +83,10 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="model_loading.cpp">
+    <ClCompile Include="stb_image.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="stb_image.cpp">
+    <ClCompile Include="GameMain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
