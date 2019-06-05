@@ -114,7 +114,7 @@ int main()
 		ResM.getShader("model")->use();
 
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f/* be able to see the whole scene */); 
 		glm::mat4 view = camera.getView();
 		ResM.getShader("model")->setMat4("projection", projection);
 		ResM.getShader("model")->setMat4("view", view);
@@ -183,7 +183,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     lastX = xpos;
     lastY = ypos;
 
-    camera.ProcessMouseMove(xoffset, yoffset);
+	// camera view move horizon 
+    camera.ProcessMouseMove(xoffset, 0);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
