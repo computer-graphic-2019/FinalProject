@@ -7,6 +7,7 @@
 
 #include "Camera.h"
 #include "GameResource.h"
+#include "GameMove.h"
 
 #include <iostream>
 
@@ -20,7 +21,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -28,6 +29,7 @@ bool firstMouse = true;
 
 //Resouce Handler
 ResourceManager ResM;
+GameMove moveController;
 
 // timing
 float deltaTime = 0.0f;
@@ -84,7 +86,9 @@ int main()
     // load models
     // -----------
     //Model ourModel("./models/gun/gun_update.obj");
-	ResM.loadModel("gun", "./models/place/scene.obj");
+	ResM.loadModel("place", "./models/place/scene.obj");
+	ResM.loadModel("target", "./models/target/target.obj");
+	ResM.loadModel("gun", "./models/gun/m24.obj");
 
     
     // draw in wireframe
@@ -115,16 +119,34 @@ int main()
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f/* be able to see the whole scene */); 
-		glm::mat4 view = camera.getView();
+		//glm::mat4 view = camera.getView();
+		glm::mat4 view = moveController.getHumanCamera()->getView();
 		ResM.getShader("model")->setMat4("projection", projection);
 		ResM.getShader("model")->setMat4("view", view);
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f)); // translate it down so it's at the center of the scene
-        //model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ResM.getShader("model")->setMat4("model", model);
-        //ourModel.Draw(ourShader);
+		ResM.getModel("place")->Draw((*ResM.getShader("model")));
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+		model = glm::translate(model, glm::vec3(0.0f, 3.0f, 100.0f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ResM.getShader("model")->setMat4("model", model);
+		ResM.getModel("target")->Draw((*ResM.getShader("model")));
+
+		// »æÖÆÇ¹
+		projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.1f, -0.1f, -0.5f));
+		model = glm::scale(model, glm::vec3(0.013f, 0.013f, 0.013f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ResM.getShader("model")->setMat4("view", glm::mat4(1.0f));
+		ResM.getShader("model")->setMat4("model", model);
+		ResM.getShader("model")->setMat4("projection", projection);
 		ResM.getModel("gun")->Draw((*ResM.getShader("model")));
 
 
@@ -147,6 +169,7 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
+	/*
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -155,6 +178,8 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+	*/
+	moveController.humanMove(window, deltaTime);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -184,7 +209,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     lastY = ypos;
 
 	// camera view move horizon 
-    camera.ProcessMouseMove(xoffset, 0);
+    //camera.ProcessMouseMove(xoffset, 0);
+	moveController.humanRotate(xoffset, 0);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

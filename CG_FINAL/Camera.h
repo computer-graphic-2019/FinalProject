@@ -26,10 +26,7 @@ enum MOVE_DIRECTION {
 };
 
 class Camera {
-private:
-	const int WINDOW_WIDTH;
-	const int WINDOW_HEIGHT;
-	
+private:	
 	glm::vec3 cameraPos;
 	glm::vec3 cameraFront;
 	glm::vec3 cameraUp;
@@ -45,10 +42,9 @@ private:
 	bool constrainPitch;
 public:
 
-	Camera(int w = 600, int h = 600,
-		glm::vec3 position = glm::vec3(0.0f,0.0f,3.0f),
+	Camera(glm::vec3 position = glm::vec3(0.0f,0.0f,3.0f),
 		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), 
-		float YAW = 90.0f, float PITCH = 0.0f):WINDOW_WIDTH(w), WINDOW_HEIGHT(h){
+		float YAW = 90.0f, float PITCH = 0.0f){
 		
 		cameraPos = position;
 		cameraUp = up;
@@ -97,7 +93,7 @@ public:
 		if (direction == RIGHT) {
 			this->moveRight(cameraSpeed);
 		}
-		cameraPos.y = 5.0f;
+		cameraPos.y = 0.0f;
 	};
 
 	void updateVector() {
@@ -114,7 +110,7 @@ public:
 	void ProcessMouseMove(double xoffset, double yoffset) {
 		
 		// 设置敏感度
-		float sensitivity = 0.1f;
+		float sensitivity = 0.5f;
 		xoffset *= sensitivity;
 		yoffset *= sensitivity;
 		// 改变俯仰角
@@ -147,6 +143,10 @@ public:
 
 	glm::vec3 getPosition() const {
 		return this->cameraPos;
+	}
+
+	glm::vec3 getFrontVec() const {
+		return this->cameraFront;
 	}
 
 	float getZoom() const {
