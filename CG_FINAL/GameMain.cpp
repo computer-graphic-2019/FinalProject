@@ -8,32 +8,12 @@
 #include "Camera.h"
 #include "GameResource.h"
 #include "GameMove.h"
+#include "SkyBox.h"
+#include "GlobalVar.h"
 
 #include <iostream>
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
 
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
-
-// camera
-Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
-bool firstMouse = true;
-
-
-//Resouce Handler
-ResourceManager ResM;
-GameMove moveController;
-
-// timing
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
 
 int main()
 {
@@ -79,6 +59,9 @@ int main()
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 
+	// skybox module
+	SkyBox skybox;
+
     // build and compile shaders
     // -------------------------
     //Shader ourShader("./1.model_loading.vs", "./1.model_loading.fs");
@@ -113,12 +96,15 @@ int main()
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// render skybox
+		skybox.renderSkyBox(glm::mat4(glm::mat3(moveController.getHumanCamera()->getView())), glm::perspective(glm::radians(camera.getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f));
+		
         // don't forget to enable shader before setting uniforms
         //ourShader.use();
 		ResM.getShader("model")->use();
 
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f/* be able to see the whole scene */); 
+        glm::mat4 projection = glm::perspective(glm::radians(camera.getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f); 
 		//glm::mat4 view = camera.getView();
 		glm::mat4 view = moveController.getHumanCamera()->getView();
 		ResM.getShader("model")->setMat4("projection", projection);
@@ -148,7 +134,7 @@ int main()
 		ResM.getShader("model")->setMat4("model", model);
 		ResM.getShader("model")->setMat4("projection", projection);
 		ResM.getModel("gun")->Draw((*ResM.getShader("model")));
-
+		
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

@@ -130,6 +130,7 @@
     <ClInclude Include="GameResource.h" />
     <ClInclude Include="GameShoot.h" />
     <ClInclude Include="GameTools.h" />
+    <ClInclude Include="GlobalVar.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_glfw.h" />
@@ -141,11 +142,14 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SkyBox.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp" />
+    <ClCompile Include="GameMove.cpp" />
+    <ClCompile Include="GameShoot.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
