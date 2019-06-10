@@ -10,7 +10,9 @@
 #include <vector>
 
 #include "Shader.h"
-#include "GlobalVar.h"
+
+// global value
+extern ResourceManager ResM;
 
 class SkyBox {
 public:

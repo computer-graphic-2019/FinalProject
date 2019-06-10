@@ -9,11 +9,22 @@
 #include "GameResource.h"
 #include "GameMove.h"
 #include "SkyBox.h"
-#include "GlobalVar.h"
 
 #include <iostream>
 
+// global value
+extern unsigned int SCR_WIDTH, SCR_HEIGHT;
+extern ResourceManager ResM;
+extern GameMove moveController;
+extern float deltaTime, lastFrame;
+extern bool gunRaiseUp;
 
+// global function
+extern void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+extern void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+extern void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+extern void processInput(GLFWwindow *window);
+extern void processMouseClick(GLFWwindow* window, int button, int action, int mods);
 
 int main()
 {
@@ -42,6 +53,7 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+	glfwSetMouseButtonCallback(window, processMouseClick);
 
     // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -123,18 +135,9 @@ int main()
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ResM.getShader("model")->setMat4("model", model);
 		ResM.getModel("target")->Draw((*ResM.getShader("model")));
-
-		// »æÖÆÇ¹
-		projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.1f, -0.1f, -0.5f));
-		model = glm::scale(model, glm::vec3(0.013f, 0.013f, 0.013f));
-		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ResM.getShader("model")->setMat4("view", glm::mat4(1.0f));
-		ResM.getShader("model")->setMat4("model", model);
-		ResM.getShader("model")->setMat4("projection", projection);
-		ResM.getModel("gun")->Draw((*ResM.getShader("model")));
-		
+	
+		// raise up gun
+		moveController.gunMove(gunRaiseUp);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -146,62 +149,4 @@ int main()
     // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
-}
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-
-	/*
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(UP, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(DOWN, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
-	*/
-	moveController.humanMove(window, deltaTime);
-}
-
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
-}
-
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-    lastX = xpos;
-    lastY = ypos;
-
-	// camera view move horizon 
-    //camera.ProcessMouseMove(xoffset, 0);
-	moveController.humanRotate(xoffset, yoffset);
-}
-
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    //camera.ProcessMouseScroll(yoffset);
 }

@@ -38,7 +38,7 @@ public:
     // 控制收枪（右键关镜）
     void putDownGun();
     // 枪械动作总控制
-    void gunMove();
+    void gunMove(bool signal);
 };
 
 #endif

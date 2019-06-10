@@ -58,16 +58,29 @@ void GameMove::raiseUpGun() {
 
 // 控制收枪（右键关镜）
 void GameMove::putDownGun() {
-
+	// 绘制枪
+	extern unsigned int SCR_WIDTH, SCR_HEIGHT;
+	extern ResourceManager ResM;
+	std::cout << "a" << std::endl;
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.1f, -0.1f, -0.5f));
+	model = glm::scale(model, glm::vec3(0.013f, 0.013f, 0.013f));
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	ResM.getShader("model")->use();
+	ResM.getShader("model")->setMat4("view", glm::mat4(1.0f));
+	ResM.getShader("model")->setMat4("model", model);
+	ResM.getShader("model")->setMat4("projection", projection);
+	ResM.getModel("gun")->Draw((*ResM.getShader("model")));
 }
 
 // 枪械动作总控制
-void GameMove::gunMove() {
+void GameMove::gunMove(bool signal) {
+	this->isGunRaiseUp = signal;
 	if (this->isGunRaiseUp) {
-		this->putDownGun();
+		this->raiseUpGun(); 
 	}
 	else {
-		this->raiseUpGun();
+		this->putDownGun();
 	}
-	this->isGunRaiseUp = !this->isGunRaiseUp;
 }
