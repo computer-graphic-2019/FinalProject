@@ -97,14 +97,14 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// render skybox
-		skybox.renderSkyBox(glm::mat4(glm::mat3(moveController.getHumanCamera()->getView())), glm::perspective(glm::radians(camera.getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f));
+		skybox.renderSkyBox(glm::mat4(glm::mat3(moveController.getHumanCamera()->getView())), glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f));
 		
         // don't forget to enable shader before setting uniforms
         //ourShader.use();
 		ResM.getShader("model")->use();
 
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f); 
+        glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
 		//glm::mat4 view = camera.getView();
 		glm::mat4 view = moveController.getHumanCamera()->getView();
 		ResM.getShader("model")->setMat4("projection", projection);
@@ -196,12 +196,12 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	// camera view move horizon 
     //camera.ProcessMouseMove(xoffset, 0);
-	moveController.humanRotate(xoffset, 0);
+	moveController.humanRotate(xoffset, yoffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    camera.ProcessMouseScroll(yoffset);
+    //camera.ProcessMouseScroll(yoffset);
 }

@@ -31,6 +31,7 @@ private:
 	glm::vec3 cameraFront;
 	glm::vec3 cameraUp;
 	glm::vec3 cameraRight;
+	glm::vec3 worldUp;
 
 	float yaw;
 	float pitch;
@@ -39,26 +40,46 @@ private:
 	float zoom;
 
 	float MovementSpeed;
+	float TurnSensitivity;
 	bool constrainPitch;
+
+	void updateVector() {
+		glm::vec3 front;
+		front.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+		front.y = sin(glm::radians(this->pitch));
+		front.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+
+		this->cameraFront = glm::normalize(front);
+		this->cameraRight = glm::normalize(glm::cross(cameraFront, worldUp));
+		this->cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
+	}
+
 public:
+
+	void setSpeed(float move = 2.5f, float turn = 0.5f) {
+		// 调整镜头移动速度
+		MovementSpeed = move;
+		TurnSensitivity = turn;
+	}
 
 	Camera(glm::vec3 position = glm::vec3(0.0f,0.0f,3.0f),
 		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), 
-		float YAW = 90.0f, float PITCH = 0.0f){
+		float YAW = 90.0f, float PITCH = 0.0f, float ZOOM = 45.0f){
 		
 		cameraPos = position;
-		cameraUp = up;
+		worldUp = up;
 
 		// yaw is initialized to -90.0 degrees since a yaw of 0.0 
 		// results in a direction vector pointing to the right 
 		// so we initially rotate a bit to the left.
 		yaw = YAW;
 		pitch = PITCH;
-		zoom = 45.0f;
+		zoom = ZOOM;
 
 		cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		MovementSpeed = 2.5f;
 		constrainPitch = true;
+
+		setSpeed();
 
 		updateVector();
 	};
@@ -96,23 +117,11 @@ public:
 		cameraPos.y = 0.0f;
 	};
 
-	void updateVector() {
-		glm::vec3 front;
-		front.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
-		front.y = sin(glm::radians(this->pitch));
-		front.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
-		
-		this->cameraFront = glm::normalize(front);
-		this->cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
-		this->cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
-	}
-
 	void ProcessMouseMove(double xoffset, double yoffset) {
 		
 		// 设置敏感度
-		float sensitivity = 0.5f;
-		xoffset *= sensitivity;
-		yoffset *= sensitivity;
+		xoffset *= TurnSensitivity;
+		yoffset *= TurnSensitivity;
 		// 改变俯仰角
 		this->yaw += xoffset;
 		this->pitch += yoffset;
