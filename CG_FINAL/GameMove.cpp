@@ -1,5 +1,9 @@
 #include "GameMove.h"
 
+extern unsigned int SCR_WIDTH, SCR_HEIGHT;
+extern ResourceManager ResM;
+extern GameMove moveController;
+
 GameMove::GameMove() {
 	this->humanCamera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f));
 	this->cameraSpeed = 1.0f;
@@ -53,15 +57,26 @@ Camera* GameMove::getHumanCamera() const {
 
 // 控制举枪（右键开镜）
 void GameMove::raiseUpGun() {
-
+	// 场景放大
+	moveController.getHumanCamera()->setZoom(30.0f);
+	// 绘制枪
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, -0.85f, -0.66f));
+	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	ResM.getShader("model")->use();
+	ResM.getShader("model")->setMat4("view", glm::mat4(1.0f));
+	ResM.getShader("model")->setMat4("model", model);
+	ResM.getShader("model")->setMat4("projection", projection);
+	ResM.getModel("gunOnFire")->Draw((*ResM.getShader("model")));
 }
 
 // 控制收枪（右键关镜）
 void GameMove::putDownGun() {
+	// 场景缩小
+	moveController.getHumanCamera()->setZoom(45.0f);
 	// 绘制枪
-	extern unsigned int SCR_WIDTH, SCR_HEIGHT;
-	extern ResourceManager ResM;
-	std::cout << "a" << std::endl;
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.1f, -0.1f, -0.5f));

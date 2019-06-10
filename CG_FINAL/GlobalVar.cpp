@@ -61,7 +61,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-	//camera.ProcessMouseScroll(yoffset);
+	if (gunRaiseUp) {
+		//moveController.getHumanCamera()->ProcessMouseScroll(yoffset);
+	}
 }
 
 void processMouseClick(GLFWwindow* window, int button, int action, int mods) {

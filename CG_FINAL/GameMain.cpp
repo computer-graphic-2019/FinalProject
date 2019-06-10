@@ -84,6 +84,7 @@ int main()
 	ResM.loadModel("place", "./models/place/scene.obj");
 	ResM.loadModel("target", "./models/target/target.obj");
 	ResM.loadModel("gun", "./models/gun/m24.obj");
+	ResM.loadModel("gunOnFire", "./models/gun/m24OnFire.obj");
 
     
     // draw in wireframe

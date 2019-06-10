@@ -146,6 +146,10 @@ public:
 			this->zoom = 45.0f;
 	}
 
+	void setZoom(float input) {
+		this->zoom = input;
+	}
+
 	glm::mat4 getView() const {
 		return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 	}
