@@ -82,7 +82,11 @@ void GameMove::putDownGun() {
 	model = glm::translate(model, glm::vec3(0.1f, -0.1f, -0.5f));
 	model = glm::scale(model, glm::vec3(0.013f, 0.013f, 0.013f));
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 gunRotate = glm::rotate(glm::mat4(1.0f), glm::radians(moveController.getHumanCamera()->getPitch()), glm::vec3(1.0f, 0.0f, 0.0f));
+	gunRotate = glm::rotate(gunRotate, glm::radians(moveController.getHumanCamera()->getYaw()), glm::vec3(0.0f, 1.0f, 0.0f));
+	
 	ResM.getShader("model")->use();
+	ResM.getShader("model")->setMat4("gunRotate", gunRotate);
 	ResM.getShader("model")->setMat4("view", glm::mat4(1.0f));
 	ResM.getShader("model")->setMat4("model", model);
 	ResM.getShader("model")->setMat4("projection", projection);

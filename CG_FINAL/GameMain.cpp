@@ -11,6 +11,7 @@
 #include "SkyBox.h"
 
 #include <iostream>
+#include <cmath>
 
 // global value
 extern unsigned int SCR_WIDTH, SCR_HEIGHT;
@@ -77,7 +78,8 @@ int main()
     // build and compile shaders
     // -------------------------
     //Shader ourShader("./1.model_loading.vs", "./1.model_loading.fs");
-	ResM.loadShader("model", "./ShaderCode/1.model_loading.vs", "./ShaderCode/1.model_loading.fs");
+	//ResM.loadShader("model", "./ShaderCode/1.model_loading.vs", "./ShaderCode/1.model_loading.fs");
+	ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs");
     // load models
     // -----------
     //Model ourModel("./models/gun/gun_update.obj");
@@ -120,8 +122,13 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
 		//glm::mat4 view = camera.getView();
 		glm::mat4 view = moveController.getHumanCamera()->getView();
+		glm::vec3 viewPos = moveController.getHumanCamera()->getPosition();
+
+		ResM.getShader("model")->setMat4("gunRotate", glm::mat4(1.0f));
 		ResM.getShader("model")->setMat4("projection", projection);
 		ResM.getShader("model")->setMat4("view", view);
+		ResM.getShader("model")->setVec3("viewPos", viewPos);
+		ResM.getShader("model")->setVec3("lightDirection", cos(glfwGetTime()), -0.5f, sin(glfwGetTime()));
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);

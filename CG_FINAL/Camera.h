@@ -165,6 +165,14 @@ public:
 	float getZoom() const {
 		return this->zoom;
 	}
+
+	float getYaw() const {
+		return this->yaw;
+	}
+
+	float getPitch() const {
+		return this->pitch;
+	}
 };
 
 #endif

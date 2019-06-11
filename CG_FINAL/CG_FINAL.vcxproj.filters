@@ -113,5 +113,8 @@
     <ClCompile Include="GameShoot.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalVar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

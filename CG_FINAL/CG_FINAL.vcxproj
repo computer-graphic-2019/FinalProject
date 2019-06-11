@@ -22,32 +22,32 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{B7AD628B-CC5D-40A9-87AF-4AD3D4D5858B}</ProjectGuid>
     <RootNamespace>CGFINAL</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -70,8 +70,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Program Files\Assimp\include;E:\320work\homework\计算机图形学\project_env\glm;E:\320work\homework\计算机图形学\project_env\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\include;E:\320work\homework\计算机图形学\project_env\glad\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\320work\homework\计算机图形学\project_env\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\lib-vc2015;C:\Program Files\Assimp\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\glm\glm;D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\imgui;D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\glad\include;D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\glfw-3.2.1\include;C:\Program Files\Assimp\include;E:\320work\homework\计算机图形学\project_env\glm;E:\320work\homework\计算机图形学\project_env\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\include;E:\320work\homework\计算机图形学\project_env\glad\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\320work\homework\计算机图形学\project_env\glfw-3.2.1.bin.WIN32\glfw-3.2.1.bin.WIN32\lib-vc2015;D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\glfw-3.2.1\build\src\Debug;C:\Program Files\Assimp\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\glad\include;C:\Program Files\Assimp\include;D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\glm\glm;D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\imgui;D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\glm;D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\glfw-3.2.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Assimp\lib\x86;D:\Xungerrrr\SYSU\大三下\计算机图形学\SYSU-CG\include\glfw-3.2.1\build\src\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -94,6 +98,9 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -151,6 +158,7 @@
     <ClCompile Include="GameMove.cpp" />
     <ClCompile Include="GameShoot.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="GlobalVar.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
