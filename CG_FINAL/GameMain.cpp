@@ -9,6 +9,7 @@
 #include "GameResource.h"
 #include "GameMove.h"
 #include "SkyBox.h"
+#include "GameShoot.h"
 
 #include <iostream>
 
@@ -16,6 +17,7 @@
 extern unsigned int SCR_WIDTH, SCR_HEIGHT;
 extern ResourceManager ResM;
 extern GameMove moveController;
+extern GameShoot shootController;
 extern float deltaTime, lastFrame;
 extern bool gunRaiseUp;
 
@@ -85,6 +87,7 @@ int main()
 	ResM.loadModel("target", "./models/target/target.obj");
 	ResM.loadModel("gun", "./models/gun/m24.obj");
 	ResM.loadModel("gunOnFire", "./models/gun/m24OnFire.obj");
+	ResM.loadModel("bullet", "./models/bullet/bullet.obj");
 
     
     // draw in wireframe
@@ -139,6 +142,9 @@ int main()
 	
 		// raise up gun
 		moveController.gunMove(gunRaiseUp);
+
+		// show bullet
+		shootController.showBullet(deltaTime);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

@@ -15,10 +15,13 @@
 
 class GameShoot {
 private:
-
+	glm::vec3 bulletPos;
+	glm::vec3 direction;
 public:
     // 控制开枪（鼠标左键）
-    void Fire(Camera& camera);
+    void Fire();
+	//
+	void showBullet(float deltaTime);
     // 检查命中位置
     void CheckCollisionWithTarget();
     // 计算命中得分

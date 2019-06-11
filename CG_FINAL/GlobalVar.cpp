@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "GameResource.h"
 #include "GameMove.h"
+#include "GameShoot.h"
 
 // settings
 unsigned int SCR_WIDTH = 800;
@@ -17,10 +18,14 @@ bool gunRaiseUp = false;
 //Resouce Handler
 ResourceManager ResM;
 GameMove moveController;
+GameShoot shootController;
 
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+// gun
+bool firstTimeShowBullet = false;
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
@@ -70,6 +75,7 @@ void processMouseClick(GLFWwindow* window, int button, int action, int mods) {
 	if (button == GLFW_MOUSE_BUTTON_LEFT) {
 		if (action == GLFW_PRESS) {
 			// Éä»÷
+			shootController.Fire();
 		}
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
