@@ -22,6 +22,10 @@ extern GameShoot shootController;
 extern float deltaTime, lastFrame;
 extern bool gunRaiseUp;
 
+extern std::map<std::string, GameObject> targetList;
+extern std::map<std::string, GameObject> movingTargetList;
+extern std::map<std::string, GameObject> explodeTargeList;
+
 // global function
 extern void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 extern void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -79,19 +83,19 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    //Shader ourShader("./1.model_loading.vs", "./1.model_loading.fs");
 	//ResM.loadShader("model", "./ShaderCode/1.model_loading.vs", "./ShaderCode/1.model_loading.fs");
 	ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs");
     // load models
     // -----------
-    //Model ourModel("./models/gun/gun_update.obj");
 	ResM.loadModel("place", "./models/place/scene.obj");
 	ResM.loadModel("target", "./models/target/target.obj");
 	ResM.loadModel("gun", "./models/gun/m24.obj");
 	ResM.loadModel("gunOnFire", "./models/gun/m24OnFire.obj");
 	ResM.loadModel("bullet", "./models/bullet/bullet.obj");
 
-    
+	// target position
+	targetList.insert(std::pair<std::string, GameObject>("target", GameObject(glm::vec3(-0.3f, 0.1f, 20.0f), glm::vec3(0.8f,1.0f,2.0f))));
+
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -118,12 +122,10 @@ int main()
 		skybox.renderSkyBox(glm::mat4(glm::mat3(moveController.getHumanCamera()->getView())), glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f));
 		
         // don't forget to enable shader before setting uniforms
-        //ourShader.use();
 		ResM.getShader("model")->use();
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
-		//glm::mat4 view = camera.getView();
 		glm::mat4 view = moveController.getHumanCamera()->getView();
 		glm::vec3 viewPos = moveController.getHumanCamera()->getPosition();
 
@@ -152,6 +154,7 @@ int main()
 
 		// show bullet
 		shootController.showBullet(deltaTime);
+		shootController.CheckCollisionWithTarget();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

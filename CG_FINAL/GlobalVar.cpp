@@ -2,6 +2,7 @@
 #include "GameResource.h"
 #include "GameMove.h"
 #include "GameShoot.h"
+#include "GameObject.h"
 
 // settings
 unsigned int SCR_WIDTH = 800;
@@ -26,6 +27,11 @@ float lastFrame = 0.0f;
 
 // gun
 bool firstTimeShowBullet = false;
+
+// objectList
+std::map<std::string, GameObject> targetList;
+std::map<std::string, GameObject> movingTargetList;
+std::map<std::string, GameObject> explodeTargeList;
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------

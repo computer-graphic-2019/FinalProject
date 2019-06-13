@@ -10,6 +10,8 @@
 
 #include "Camera.h"
 #include "GameResource.h"
+#include "GameObject.h"
+#include "GameMove.h"
 
 #include <iostream>
 
@@ -17,10 +19,16 @@ class GameShoot {
 private:
 	glm::vec3 bulletPos;
 	glm::vec3 direction;
+	GameObject bullet;
+	bool isHit;
 public:
+	GameShoot() {
+		this->bulletPos = glm::vec3(0.0f, 0.0f, -200.0f);
+		this->isHit = false;
+	}
     // 控制开枪（鼠标左键）
     void Fire();
-	//
+	// 子弹轨迹
 	void showBullet(float deltaTime);
     // 检查命中位置
     void CheckCollisionWithTarget();

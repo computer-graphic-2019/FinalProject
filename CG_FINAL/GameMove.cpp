@@ -6,7 +6,7 @@ extern GameMove moveController;
 
 GameMove::GameMove() {
 	this->humanCamera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f));
-	this->cameraSpeed = 1.0f;
+	this->cameraSpeed = 6.0f;
 }
 
 // 控制人物前移(w)
