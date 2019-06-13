@@ -8,6 +8,7 @@
 #include <gtc\type_ptr.hpp>
 
 #include <vector>
+#include <string>
 
 #include "Shader.h"
 
@@ -22,13 +23,14 @@ public:
 		// 加载顶点
 		VAO = loadVec();
 		// 加载纹理
-		std::vector<const GLchar*> vecSkyfaces;
-		vecSkyfaces.push_back("./img/skybox/land_bk.jpg");
-		vecSkyfaces.push_back("./img/skybox/land_ft.jpg");
-		vecSkyfaces.push_back("./img/skybox/land_up.jpg");
-		vecSkyfaces.push_back("./img/skybox/land_dn.jpg");
-		vecSkyfaces.push_back("./img/skybox/land_lf.jpg");
-		vecSkyfaces.push_back("./img/skybox/land_rt.jpg");
+		std::string path = "thefog";
+		std::vector<std::string> vecSkyfaces;
+		vecSkyfaces.push_back("./img/skybox/" + path + "_ft.tga");
+		vecSkyfaces.push_back("./img/skybox/" + path + "_bk.tga");
+		vecSkyfaces.push_back("./img/skybox/" + path + "_up.tga");
+		vecSkyfaces.push_back("./img/skybox/" + path + "_dn.tga");
+		vecSkyfaces.push_back("./img/skybox/" + path + "_rt.tga");
+		vecSkyfaces.push_back("./img/skybox/" + path + "_lf.tga");
 		textureId = loadCubemapTexture(vecSkyfaces);
 		// 加载顶点着色器
 		ResM.loadShader("skybox", "./ShaderCode/2.skybox_shader.vs", "./ShaderCode/2.skybox_shader.fs");
@@ -96,7 +98,7 @@ private:
 		return skyboxVAO;
 	}
 	// 加载天空盒纹理
-	GLuint loadCubemapTexture(std::vector<const GLchar *> vecSkyfaces)
+	GLuint loadCubemapTexture(std::vector<std::string> vecSkyfaces)
 	{
 		GLuint textureId = 0;
 		glGenTextures(1, &textureId);
@@ -107,7 +109,7 @@ private:
 
 			for (int i = 0; i < vecSkyfaces.size(); i++)
 			{
-				pChImg = stbi_load(vecSkyfaces[i], &nW, &nH, &nC, 0);
+				pChImg = stbi_load(vecSkyfaces[i].c_str(), &nW, &nH, &nC, 0);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
 					nW, nH, 0, GL_RGB, GL_UNSIGNED_BYTE, pChImg);
 				stbi_image_free(pChImg);
