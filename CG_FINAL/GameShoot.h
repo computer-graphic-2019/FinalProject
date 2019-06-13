@@ -7,13 +7,14 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
+#include <iostream>
+#include <ft2build.h>
+#include FT_FREETYPE_H  
 
 #include "Camera.h"
 #include "GameResource.h"
 #include "GameObject.h"
 #include "GameMove.h"
-
-#include <iostream>
 
 class GameShoot {
 private:
@@ -21,11 +22,9 @@ private:
 	glm::vec3 direction;
 	GameObject bullet;
 	bool isHit;
+	int point;
 public:
-	GameShoot() {
-		this->bulletPos = glm::vec3(0.0f, 0.0f, -200.0f);
-		this->isHit = false;
-	}
+	GameShoot();
     // 控制开枪（鼠标左键）
     void Fire();
 	// 子弹轨迹
@@ -34,8 +33,9 @@ public:
     void CheckCollisionWithTarget();
     // 计算命中得分
     void CalculateScore();
-    // 计算是否需要装弹（非必需）
-    void CheckIfNeedReload();
+	// 显示得分
+	void showScore(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+	void initialTextShader();
 };
 
 #endif

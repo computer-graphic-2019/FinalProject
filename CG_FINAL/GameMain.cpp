@@ -87,6 +87,7 @@ int main()
 	//ResM.loadShader("model", "./ShaderCode/1.model_loading.vs", "./ShaderCode/1.model_loading.fs");
 	ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs");
 	ResM.loadShader("explodeModel", "./ShaderCode/4.explode_shading.vs", "./ShaderCode/4.explode_shading.fs", "./ShaderCode/4.explode_shading.gs");
+	ResM.loadShader("textShader", "./ShaderCode/5.text_loading.vs", "./ShaderCode/5.text_loading.fs");
     // load models
     // -----------
 	ResM.loadModel("place", "./models/place/scene.obj");
@@ -103,6 +104,7 @@ int main()
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	shootController.initialTextShader();
 
     // render loop
     // -----------
