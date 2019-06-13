@@ -32,6 +32,7 @@ bool firstTimeShowBullet = false;
 std::map<std::string, GameObject> targetList;
 std::map<std::string, GameObject> movingTargetList;
 std::map<std::string, GameObject> explodeTargeList;
+std::map<std::string, bool> explodeTargeRec;
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------

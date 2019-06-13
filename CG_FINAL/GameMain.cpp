@@ -25,6 +25,7 @@ extern bool gunRaiseUp;
 extern std::map<std::string, GameObject> targetList;
 extern std::map<std::string, GameObject> movingTargetList;
 extern std::map<std::string, GameObject> explodeTargeList;
+extern std::map<std::string, bool> explodeTargeRec;
 
 // global function
 extern void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -85,6 +86,7 @@ int main()
     // -------------------------
 	//ResM.loadShader("model", "./ShaderCode/1.model_loading.vs", "./ShaderCode/1.model_loading.fs");
 	ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs");
+	ResM.loadShader("explodeModel", "./ShaderCode/4.explode_shading.vs", "./ShaderCode/4.explode_shading.fs", "./ShaderCode/4.explode_shading.gs");
     // load models
     // -----------
 	ResM.loadModel("place", "./models/place/scene.obj");
@@ -92,9 +94,12 @@ int main()
 	ResM.loadModel("gun", "./models/gun/m24.obj");
 	ResM.loadModel("gunOnFire", "./models/gun/m24OnFire.obj");
 	ResM.loadModel("bullet", "./models/bullet/bullet.obj");
+	ResM.loadModel("explodeTarget", "./models/explodeTarget/explodeTarget.obj");
 
 	// target position
 	targetList.insert(std::pair<std::string, GameObject>("target", GameObject(glm::vec3(-0.3f, 0.1f, 20.0f), glm::vec3(0.8f,1.0f,2.0f))));
+	explodeTargeList.insert(std::pair<std::string, GameObject>("explodeTarget1", GameObject(glm::vec3(1.5f, 0.1f, 20.0f), glm::vec3(0.8f, 1.0f, 2.0f))));
+	explodeTargeRec.insert(std::pair<std::string, bool>("explodeTarget1", false));
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -148,6 +153,31 @@ int main()
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ResM.getShader("model")->setMat4("model", model);
 		ResM.getModel("target")->Draw((*ResM.getShader("model")));
+
+		// explode target
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+		model = glm::translate(model, glm::vec3(7.0f, 3.0f, 100.0f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		for (std::map<std::string, bool>::iterator ptr = explodeTargeRec.begin(); ptr != explodeTargeRec.end(); ptr++) {
+			if (ptr->second) {
+				ResM.getShader("explodeModel")->use();
+				ResM.getShader("explodeModel")->setMat4("gunRotate", glm::mat4(1.0f));
+				ResM.getShader("explodeModel")->setMat4("projection", projection);
+				ResM.getShader("explodeModel")->setMat4("view", view);
+				ResM.getShader("explodeModel")->setVec3("viewPos", viewPos);
+				ResM.getShader("explodeModel")->setVec3("lightDirection", cos(glfwGetTime()), -0.5f, sin(glfwGetTime()));
+				// add time component to geometry shader in the form of a uniform
+				ResM.getShader("explodeModel")->setFloat("time", glfwGetTime()); //爆炸效果改这里
+				ResM.getShader("explodeModel")->setMat4("model", model);
+				ResM.getModel("explodeTarget")->Draw((*ResM.getShader("explodeModel")));
+			}
+			else {
+				ResM.getShader("model")->setMat4("model", model);
+				ResM.getModel("explodeTarget")->Draw((*ResM.getShader("model")));
+			}
+		}
 	
 		// raise up gun
 		moveController.gunMove(gunRaiseUp);

@@ -29,8 +29,8 @@ private:
 	std::map<std::string, Model*> modelList;
 public:
 	// 加载Shader
-	void loadShader(std::string shaderName, const char* vertex, const char* fragment) {
-		Shader* temp_shader = new Shader(vertex, fragment);
+	void loadShader(std::string shaderName, const char* vertex, const char* fragment, const char* geometry = nullptr) {
+		Shader* temp_shader = new Shader(vertex, fragment, geometry);
 		this->shaderList.insert(std::pair<std::string, Shader*>(shaderName, temp_shader));
 	}
 	// 获取已加载的Shader

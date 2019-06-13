@@ -9,6 +9,7 @@ extern bool gunRaiseUp;
 extern std::map<std::string, GameObject> targetList;
 extern std::map<std::string, GameObject> movingTargetList;
 extern std::map<std::string, GameObject> explodeTargeList;
+extern std::map<std::string, bool> explodeTargeRec;
 
 // 控制开枪（鼠标左键）
 void GameShoot::Fire() {
@@ -73,6 +74,7 @@ void GameShoot::CheckCollisionWithTarget() {
 			//std::cout << "bullet: " << this->bullet.Position.x << " " << this->bullet.Position.y << " " << this->bullet.Position.z << std::endl;
 			if (ptr->second.CheckCollision(this->bullet)) {
 				this->isHit = true;
+				explodeTargeRec[ptr->first] = true;
 			}
 		}
 	}
