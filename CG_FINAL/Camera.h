@@ -64,7 +64,7 @@ public:
 
 	Camera(glm::vec3 position = glm::vec3(0.0f,0.0f,3.0f),
 		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), 
-		float YAW = 90.0f, float PITCH = 0.0f, float ZOOM = 45.0f){
+		float YAW = -90.0f, float PITCH = 0.0f, float ZOOM = 45.0f){
 		
 		cameraPos = position;
 		worldUp = up;
@@ -76,7 +76,7 @@ public:
 		pitch = PITCH;
 		zoom = ZOOM;
 
-		cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+		cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 		constrainPitch = true;
 
 		setSpeed();
