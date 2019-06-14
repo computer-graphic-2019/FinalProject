@@ -150,13 +150,13 @@ int main()
 		
 		// 获取阴影贴图（待修改）
 		ResM.getShader("depth")->use();
-		glm::vec3 lightPos = glm::vec3(0, 5.0f, 20 + 10 * sin(currentFrame));
+		glm::vec3 lightPos = glm::vec3(10.0 , 100.0f, 0.0f);
 		glm::mat4 lightView = glm::mat4(1.0f);
 		glm::mat4 lightProjection = glm::mat4(1.0f);
 		glm::mat4 lightSpaceMatrix = glm::mat4(1.0f);
-		float near_plane = 1.0f, far_plane = 100.0f;
+		float near_plane = 0.1f, far_plane = 100.0f;
 		lightProjection = glm::perspective(glm::radians(120.0f), 1.0f, near_plane, far_plane);
-		lightView = glm::lookAt(lightPos, glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0, 1.0, 0.0));
+		lightView = glm::lookAt(lightPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0, 1.0, 0.0));
 		lightSpaceMatrix = lightProjection * lightView;
 		ResM.getShader("depth")->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
@@ -170,6 +170,7 @@ int main()
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ResM.getShader("depth")->setMat4("model", model);
 		ResM.getModel("place")->Draw((*ResM.getShader("depth")));
+
 
 		model = glm::mat4(1.0f);
 		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));

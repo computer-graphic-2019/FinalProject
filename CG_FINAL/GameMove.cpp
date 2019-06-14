@@ -5,7 +5,7 @@ extern ResourceManager ResM;
 extern GameMove moveController;
 
 GameMove::GameMove() {
-	this->humanCamera = new Camera(glm::vec3(0.0f, 10.0f, 20.0f));
+	this->humanCamera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f));
 	this->cameraSpeed = 6.0f;
 }
 
