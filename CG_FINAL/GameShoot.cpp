@@ -11,6 +11,7 @@ extern std::map<std::string, GameObject> targetList;
 extern std::map<std::string, GameObject> movingTargetList;
 extern std::map<std::string, GameObject> explodeTargeList;
 extern std::map<std::string, bool> explodeTargeRec;
+extern std::deque<std::string> recoverList;
 
 struct Character {
 	GLuint TextureID;   // ID handle of the glyph texture
@@ -50,8 +51,12 @@ void GameShoot::showBullet(float deltaTime) {
 	// 子弹轨迹
 	this->bullet.Position = bulletPos;
 
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	if (gunRaiseUp) {
+		projection = glm::perspective(glm::radians(30.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	}
 	if (!this->isHit) {
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, bulletPos);
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
@@ -92,9 +97,10 @@ void GameShoot::CheckCollisionWithTarget() {
 		for (std::map<std::string, GameObject>::iterator ptr = explodeTargeList.begin(); ptr != explodeTargeList.end(); ptr++) {
 			//std::cout << "target: " << ptr->second.Position.x << " " << ptr->second.Position.y << " " << ptr->second.Position.z << std::endl;
 			//std::cout << "bullet: " << this->bullet.Position.x << " " << this->bullet.Position.y << " " << this->bullet.Position.z << std::endl;
-			if (ptr->second.CheckCollision(this->bullet)) {
+			if (!explodeTargeRec[ptr->first] && ptr->second.CheckCollision(this->bullet)) {
 				this->isHit = true;
 				explodeTargeRec[ptr->first] = true;
+				recoverList.push_back(ptr->first);
 				CalculateScore();
 			}
 		}

@@ -4,6 +4,8 @@
 #include "GameShoot.h"
 #include "GameObject.h"
 
+#include <deque>
+
 // settings
 unsigned int SCR_WIDTH = 800;
 unsigned int SCR_HEIGHT = 600;
@@ -33,6 +35,7 @@ std::map<std::string, GameObject> targetList;
 std::map<std::string, GameObject> movingTargetList;
 std::map<std::string, GameObject> explodeTargeList;
 std::map<std::string, bool> explodeTargeRec;
+std::deque<std::string> recoverList;
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------

@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <deque>
 
 // global value
 extern unsigned int SCR_WIDTH, SCR_HEIGHT;
@@ -26,6 +27,7 @@ extern std::map<std::string, GameObject> targetList;
 extern std::map<std::string, GameObject> movingTargetList;
 extern std::map<std::string, GameObject> explodeTargeList;
 extern std::map<std::string, bool> explodeTargeRec;
+extern std::deque<std::string> recoverList;
 
 // global function
 extern void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -33,6 +35,8 @@ extern void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 extern void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 extern void processInput(GLFWwindow *window);
 extern void processMouseClick(GLFWwindow* window, int button, int action, int mods);
+
+float reset_interval = 0.0f;
 
 int main()
 {
@@ -120,6 +124,16 @@ int main()
         // -----
         processInput(window);
 
+		// reset environment
+		reset_interval += deltaTime;
+		if (reset_interval > 5.0f) {
+			if (!recoverList.empty()) {
+				explodeTargeRec[recoverList.front()] = false;
+				recoverList.pop_front();
+			}
+			reset_interval = 0.0f;
+		}
+
         // render
         // ------
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
@@ -144,7 +158,7 @@ int main()
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::translate(model, glm::vec3(0.0f, -5.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ResM.getShader("model")->setMat4("model", model);
 		ResM.getModel("place")->Draw((*ResM.getShader("model")));
@@ -171,7 +185,7 @@ int main()
 				ResM.getShader("explodeModel")->setVec3("viewPos", viewPos);
 				ResM.getShader("explodeModel")->setVec3("lightDirection", cos(glfwGetTime()), -0.5f, sin(glfwGetTime()));
 				// add time component to geometry shader in the form of a uniform
-				ResM.getShader("explodeModel")->setFloat("time", glfwGetTime()); //爆炸效果改这里
+				ResM.getShader("explodeModel")->setFloat("time", 1.0f/*glfwGetTime()*/); //爆炸效果改这里
 				ResM.getShader("explodeModel")->setMat4("model", model);
 				ResM.getModel("explodeTarget")->Draw((*ResM.getShader("explodeModel")));
 			}

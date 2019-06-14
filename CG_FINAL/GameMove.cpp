@@ -60,7 +60,7 @@ void GameMove::raiseUpGun() {
 	// 场景放大（有可能导致子弹飞行的视觉误差）
 	moveController.getHumanCamera()->setZoom(30.0f);
 	// 绘制枪
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(30.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, -0.8848f, -0.66f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
