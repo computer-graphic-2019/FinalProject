@@ -34,8 +34,8 @@ public:
 		ResM.loadShader("debug", "./ShaderCode/debug.vs", "./ShaderCode/debug.fs");
 		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs");
 		// 初始化阴影贴图
-		SHADOW_WIDTH = 1024;
-		SHADOW_HEIGHT = 1024;
+		SHADOW_WIDTH = 4096;
+		SHADOW_HEIGHT = 4096;
 		glGenFramebuffers(1, &depthMapFBO);
 		glGenTextures(1, &depthMap);
 		glBindTexture(GL_TEXTURE_2D, depthMap);
@@ -57,7 +57,7 @@ public:
 		Shader* shader = ResM.getShader("depthShader");
 		shader->use();
 		glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-		glm::mat4 lightProjection = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 50.0f, 150.0f);
+		glm::mat4 lightProjection = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.0f, 200.0f);
 		lightSpaceMatrix = lightProjection * lightView;
 		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 		// clear
@@ -98,18 +98,20 @@ public:
 		RenderObject(shader);
 	}
 
-	// 场景渲染
+	// 渲染所有物体
 	void RenderObject(Shader* shader) {
+		glm::mat4 model;
 		// floor
-		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -5.0f, 0.0f));
+		//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		shader->setMat4("model", model);
 		ResM.getModel("place")->Draw(*shader);
 		// target
 		model = glm::mat4(1.0f);
-		//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-		model = glm::translate(model, glm::vec3(0.0f, 1.0f, -1.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 1.0f, -10.0f));
 		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		shader->setMat4("model", model);
 		ResM.getModel("target")->Draw(*shader);
 	}
@@ -134,8 +136,8 @@ public:
 			// positions        // texture Coords
 			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
 			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-				1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-				1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+			1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
 		};
 		// setup plane VAO
 		glGenVertexArrays(1, &quadVAO);
@@ -156,59 +158,7 @@ public:
 		glDeleteVertexArrays(1, &quadVAO);
 		glDeleteBuffers(1, &quadVBO);
 	}
-	/*
-	void RenderScene1(Shader* shader) {
-		ResM.getShader("model")->use();
-
-		glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
-		glm::mat4 view = moveController.getHumanCamera()->getView();
-		glm::vec3 viewPos = moveController.getHumanCamera()->getPosition();
-
-		ResM.getShader("model")->setMat4("view", view);
-		ResM.getShader("model")->setMat4("projection", projection);
-		ResM.getShader("model")->setVec3("viewPos", viewPos);
-		ResM.getShader("model")->setVec3("lightDirection", cos(glfwGetTime()), -0.5f, sin(glfwGetTime()));
-
-		// render the loaded model
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -5.0f, 0.0f)); // translate it down so it's at the center of the scene
-		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ResM.getShader("model")->setMat4("model", model);
-		ResM.getModel("place")->Draw((*ResM.getShader("model")));
-
-		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-		model = glm::translate(model, glm::vec3(0.0f, 3.0f, -100.0f));
-		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ResM.getShader("model")->setMat4("model", model);
-		ResM.getModel("target")->Draw((*ResM.getShader("model")));
-
-		// explode target
-		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-		model = glm::translate(model, glm::vec3(7.0f, 3.0f, -100.0f));
-		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-		for (std::map<std::string, bool>::iterator ptr = explodeTargeRec.begin(); ptr != explodeTargeRec.end(); ptr++) {
-			if (ptr->second) {
-				ResM.getShader("explodeModel")->use();
-				ResM.getShader("explodeModel")->setMat4("gunRotate", glm::mat4(1.0f));
-				ResM.getShader("explodeModel")->setMat4("projection", projection);
-				ResM.getShader("explodeModel")->setMat4("view", view);
-				ResM.getShader("explodeModel")->setVec3("viewPos", viewPos);
-				ResM.getShader("explodeModel")->setVec3("lightDirection", cos(glfwGetTime()), -0.5f, sin(glfwGetTime()));
-				// add time component to geometry shader in the form of a uniform
-				ResM.getShader("explodeModel")->setFloat("time", 1.0f); //爆炸效果改这里
-				ResM.getShader("explodeModel")->setMat4("model", model);
-				ResM.getModel("explodeTarget")->Draw((*ResM.getShader("explodeModel")));
-			}
-			else {
-				ResM.getShader("model")->setMat4("model", model);
-				ResM.getModel("explodeTarget")->Draw((*ResM.getShader("model")));
-			}
-		}
-	}
-	*/
+	
 };
 
 #endif

@@ -10,6 +10,7 @@
 #include "GameMove.h"
 #include "SkyBox.h"
 #include "GameShoot.h"
+#include "GameTools.h"
 
 #include <iostream>
 #include <cmath>
@@ -82,10 +83,13 @@ int main()
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_FRAMEBUFFER_SRGB);
+	//glEnable(GL_FRAMEBUFFER_SRGB);
 
 	// skybox module
 	SkyBox skybox;
+	// render director
+	GameTools director(glm::vec3(1.0f), 0.1, 0.9, 0.9);
+
 
     // build and compile shaders
     // -------------------------
@@ -170,6 +174,11 @@ int main()
 		// render skybox
 		skybox.renderSkyBox(glm::mat4(glm::mat3(moveController.getHumanCamera()->getView())), glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f));
 		
+		glm::vec3 lightPos(0.0, 100.0, 1.0);
+		director.RenderDepthMap(lightPos);
+		director.RenderScene(lightPos);
+		//director.testMap(window);
+		/*
         // don't forget to enable shader before setting uniforms
 		ResM.getShader("model")->use();
 
@@ -252,7 +261,7 @@ int main()
 				ResM.getShader("explodeModel")->setVec3("viewPos", viewPos);
 				ResM.getShader("explodeModel")->setVec3("lightDirection", cos(glfwGetTime()), -0.5f, sin(glfwGetTime()));
 				// add time component to geometry shader in the form of a uniform
-				ResM.getShader("explodeModel")->setFloat("time", 1.0f/*glfwGetTime()*/); //爆炸效果改这里
+				ResM.getShader("explodeModel")->setFloat("time", 1.0f); //爆炸效果改这里
 				ResM.getShader("explodeModel")->setMat4("model", model);
 				ResM.getModel("explodeTarget")->Draw((*ResM.getShader("explodeModel")));
 			}
@@ -268,7 +277,7 @@ int main()
 		// show bullet
 		shootController.showBullet(deltaTime);
 		shootController.CheckCollisionWithTarget();
-
+		*/
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);

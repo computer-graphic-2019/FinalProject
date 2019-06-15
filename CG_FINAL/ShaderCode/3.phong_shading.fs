@@ -28,29 +28,32 @@ float ShadowCalculation(vec4 fragPosLightSpace)
    float closestDepth = texture(shadowMap, projCoords.xy).r; 
    // Get depth of current fragment from light's perspective 
    float currentDepth = projCoords.z; 
-   shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+   //shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
 
    // Calculate bias (based on depth map resolution and slope) 
    vec3 normal = normalize(in_fs.Normal); 
    vec3 lightDir = normalize(light.position - in_fs.FragPos);
-   float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.05);
+   float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+
    // PCF 
-   vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-   for(int x = -1; x <= 1; ++x)
+   vec2 texelSize = 0.2 / textureSize(shadowMap, 0);
+   for(int x = -2; x <= 2; ++x)
    {
-       for(int y = -1; y <= 1; ++y)
+       for(int y = -2; y <= 2; ++y)
        {
            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
        } 
    }
-   shadow /= 9.0;
+   shadow /= 25.0;
+
    // Keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
    if(projCoords.z > 1.0)
        shadow = 0.0;
 
    return shadow;
 }
+
 void main()
 {
    vec3 diffuse_color = texture(texture_diffuse1, in_fs.TexCoords).rgb;
