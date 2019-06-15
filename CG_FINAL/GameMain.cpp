@@ -88,7 +88,7 @@ int main()
 	// skybox module
 	SkyBox skybox;
 	// render director
-	GameTools director(glm::vec3(1.0f), 0.1, 0.9, 0.9);
+	GameTools director(glm::vec3(1.0f), 0.1, 0.5, 0.3);
 
 
     // build and compile shaders
@@ -117,30 +117,6 @@ int main()
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	shootController.initialTextShader();
-
-	// generate random positions
-	float treeScale[30], treeX[30], treeZ[30];
-	for (int i = 0; i < 30; i++) {
-		treeX[i] = rand() % 100;
-		treeZ[i] = rand() % 100;
-		treeScale[i] = rand() % 10 / (float)10 / 2 + 0.3;
-	}
-	float tree3Scale[30], tree3X[30], tree3Z[30];
-	for (int i = 0; i < 30; i++) {
-		tree3X[i] = rand() % 100;
-		tree3Z[i] = rand() % 100;
-		tree3Scale[i] = rand() % 10 / (float)10 / 2 + 0.5;
-	}
-	float grassX[100], grassZ[100];
-	for (int i = 0; i < 100; i++) {
-		grassX[i] = rand() % 50;
-		grassZ[i] = rand() % 50;
-	}
-	float stoneX[100], stoneZ[100];
-	for (int i = 0; i < 100; i++) {
-		stoneX[i] = rand() % 100;
-		stoneZ[i] = rand() % 100;
-	}
 
     // render loop
     // -----------
@@ -174,82 +150,18 @@ int main()
 		// render skybox
 		skybox.renderSkyBox(glm::mat4(glm::mat3(moveController.getHumanCamera()->getView())), glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f));
 		
-		glm::vec3 lightPos(0.0, 100.0, 1.0);
+		glm::vec3 lightPos(100 * cos(currentFrame / 5), 100 * sin(currentFrame / 5), 1.0);
 		director.RenderDepthMap(lightPos);
 		director.RenderScene(lightPos);
 		//director.testMap(window);
-		/*
-        // don't forget to enable shader before setting uniforms
-		ResM.getShader("model")->use();
-
-        // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
-		glm::mat4 view = moveController.getHumanCamera()->getView();
-		glm::vec3 viewPos = moveController.getHumanCamera()->getPosition();
-
-		ResM.getShader("model")->setMat4("gunRotate", glm::mat4(1.0f));
-		ResM.getShader("model")->setMat4("projection", projection);
-		ResM.getShader("model")->setMat4("view", view);
-		ResM.getShader("model")->setVec3("viewPos", viewPos);
-		ResM.getShader("model")->setVec3("lightDirection", cos(glfwGetTime()), -0.5f, sin(glfwGetTime()));
-
-        // render the loaded model
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -5.0f, 0.0f)); // translate it down so it's at the center of the scene
-        //model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ResM.getShader("model")->setMat4("model", model);
-		ResM.getModel("place")->Draw((*ResM.getShader("model")));
-
-		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-		model = glm::translate(model, glm::vec3(0.0f, 3.0f, -100.0f));
-		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ResM.getShader("model")->setMat4("model", model);
-		ResM.getModel("target")->Draw((*ResM.getShader("model")));
-
-		// render trees
-		for (int i = 0; i < 30; i++) {
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(treeX[i] - 50, -2.0f + (treeScale[i] - 1) * 3.0f, treeZ[i] - 50));
-			model = glm::scale(model, glm::vec3(treeScale[i], treeScale[i], treeScale[i]));
-			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			ResM.getShader("model")->setMat4("model", model);
-			ResM.getModel("tree")->Draw((*ResM.getShader("model")));
-		}
-
-		for (int i = 0; i < 30; i++) {
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(tree3X[i]-50, (tree3Scale[i]-1)*5.0f, tree3Z[i]-50));
-			model = glm::scale(model, glm::vec3(tree3Scale[i], tree3Scale[i], tree3Scale[i]));
-			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			ResM.getShader("model")->setMat4("model", model);
-			ResM.getModel("tree3")->Draw((*ResM.getShader("model")));
-		}
-
-		// render grass
-		for (int i = 0; i < 100; i++) {
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(grassX[i] - 25, -5.0f, grassZ[i] - 25));
-			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
-			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			ResM.getShader("model")->setMat4("model", model);
-			ResM.getModel("grass")->Draw((*ResM.getShader("model")));
-		}
-
-		// render stone
-		for (int i = 0; i < 100; i++) {
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(stoneX[i] - 50, -5.0f, stoneZ[i] - 50));
-			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
-			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			ResM.getShader("model")->setMat4("model", model);
-			ResM.getModel("stone")->Draw((*ResM.getShader("model")));
-		}
 
 		// explode target
-		model = glm::mat4(1.0f);
+		glm::vec3 viewPos = moveController.getHumanCamera()->getPosition();
+		glm::mat4 view = moveController.getHumanCamera()->getView();
+		glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
+		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-		model = glm::translate(model, glm::vec3(7.0f, 3.0f, -100.0f));
+		model = glm::translate(model, glm::vec3(7.0f, 3.0f, -10.0f));
 		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		for (std::map<std::string, bool>::iterator ptr = explodeTargeRec.begin(); ptr != explodeTargeRec.end(); ptr++) {
@@ -270,14 +182,14 @@ int main()
 				ResM.getModel("explodeTarget")->Draw((*ResM.getShader("model")));
 			}
 		}
-	
+		
 		// raise up gun
 		moveController.gunMove(gunRaiseUp);
 
 		// show bullet
 		shootController.showBullet(deltaTime);
 		shootController.CheckCollisionWithTarget();
-		*/
+		
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);

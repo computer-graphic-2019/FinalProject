@@ -14,25 +14,43 @@
 #include "SkyBox.h"
 #include "GameShoot.h"
 
+#include <vector>
+
 extern unsigned int SCR_WIDTH, SCR_HEIGHT;
 extern ResourceManager ResM;
 extern GameMove moveController;
 
+int numOfTree = 50;
+int numOfTree3 = 50;
+int numOfGrass = 150;
+int numOfStone = 150;
+
+int coverWidth = 100;
+int coveLength = 100;
+
 class GameTools {
 private:
+	// shading
 	GLuint depthMapFBO, depthMap;
 	GLuint SHADOW_WIDTH, SHADOW_HEIGHT;
 	glm::mat4 lightSpaceMatrix;
 	glm::vec3 ambient_light, diffuse_light, specular_light;
+	// random trees
+	std::vector<float> treeScale, treeX, treeZ;
+	std::vector<float> tree3Scale, tree3X, tree3Z;
+	std::vector<float> grassX, grassZ;
+	std::vector<float> stoneX, stoneZ;
 public:
 	GameTools(glm::vec3 light, float ambient, float diffuse, float specular) {
 		// 初始化光照参数
 		this->ambient_light = ambient * light;
 		this->diffuse_light = diffuse * light;
 		this->specular_light = specular * light;
+
 		// 加载深度着色器
 		ResM.loadShader("debug", "./ShaderCode/debug.vs", "./ShaderCode/debug.fs");
 		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs");
+
 		// 初始化阴影贴图
 		SHADOW_WIDTH = 4096;
 		SHADOW_HEIGHT = 4096;
@@ -50,6 +68,26 @@ public:
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);	
+
+		// 随机位置参数
+		for (int i = 0; i < numOfTree; i++) {
+			treeX.push_back(rand() % (2 * coveLength) - coveLength);
+			treeZ.push_back(rand() % (2 * coverWidth) - coverWidth);
+			treeScale.push_back(rand() % 20 / (float)40 + 1.0);
+		}
+		for (int i = 0; i < numOfTree3; i++) {
+			tree3X.push_back(rand() % (2 * coveLength) - coveLength);
+			tree3Z.push_back(rand() % (2 * coverWidth) - coverWidth);
+			tree3Scale.push_back(rand() % 20 / (float)40 + 1.0);
+		}
+		for (int i = 0; i < numOfGrass; i++) {
+			grassX.push_back(rand() % (2 * coveLength) - coveLength);
+			grassZ.push_back(rand() % (2 * coverWidth) - coverWidth);
+		}
+		for (int i = 0; i < numOfStone; i++) {
+			stoneX.push_back(rand() % (2 * coveLength) - coveLength);
+			stoneZ.push_back(rand() % (2 * coverWidth) - coverWidth);
+		}
 	}
 	// 深度贴图
 	void RenderDepthMap(glm::vec3 lightPos) {
@@ -90,7 +128,6 @@ public:
 
 		// clear
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// render
 		glActiveTexture(GL_TEXTURE31);
@@ -101,19 +138,59 @@ public:
 	// 渲染所有物体
 	void RenderObject(Shader* shader) {
 		glm::mat4 model;
-		// floor
+
+		// 地板
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -5.0f, 0.0f));
 		//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		shader->setMat4("model", model);
 		ResM.getModel("place")->Draw(*shader);
-		// target
+
+		// 靶子
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 1.0f, -10.0f));
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		shader->setMat4("model", model);
 		ResM.getModel("target")->Draw(*shader);
+
+		// 两种树
+		for (int i = 0; i < numOfTree; i++) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(treeX[i] - 50, -2.0f + (treeScale[i] - 1) * 3.0f, treeZ[i] - 50));
+			model = glm::scale(model, glm::vec3(treeScale[i], treeScale[i], treeScale[i]));
+			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			shader->setMat4("model", model);
+			ResM.getModel("tree")->Draw(*shader);
+		}
+		for (int i = 0; i < numOfTree3; i++) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(tree3X[i] - 50, (tree3Scale[i] - 1)*5.0f, tree3Z[i] - 50));
+			model = glm::scale(model, glm::vec3(tree3Scale[i], tree3Scale[i], tree3Scale[i]));
+			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			shader->setMat4("model", model);
+			ResM.getModel("tree3")->Draw(*shader);
+		}
+
+		// 草
+		for (int i = 0; i < numOfGrass; i++) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(grassX[i] - 25, -5.0f, grassZ[i] - 25));
+			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
+			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			shader->setMat4("model", model);
+			ResM.getModel("grass")->Draw(*shader);
+		}
+
+		// 石头
+		for (int i = 0; i < numOfStone; i++) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(stoneX[i] - 50, -5.0f, stoneZ[i] - 50));
+			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
+			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			shader->setMat4("model", model);
+			ResM.getModel("stone")->Draw(*shader);
+		}
 	}
 
 	void testMap(GLFWwindow* window) {
