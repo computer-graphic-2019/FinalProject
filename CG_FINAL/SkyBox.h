@@ -23,7 +23,7 @@ public:
 		// 加载顶点
 		VAO = loadVec();
 		// 加载纹理
-		std::string path = "nightball";
+		std::string path = "miramar/miramar";
 		std::vector<std::string> vecSkyfaces;
 		vecSkyfaces.push_back("./img/skybox/" + path + "_ft.tga");
 		vecSkyfaces.push_back("./img/skybox/" + path + "_bk.tga");
