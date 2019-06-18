@@ -114,7 +114,7 @@ public:
 		if (direction == RIGHT) {
 			this->moveRight(cameraSpeed);
 		}
-		cameraPos.y = 0.0f;
+		cameraPos.y = 5.0f;
 	};
 
 	void ProcessMouseMove(double xoffset, double yoffset) {

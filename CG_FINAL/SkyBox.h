@@ -13,7 +13,9 @@
 #include "Shader.h"
 
 // global value
+extern unsigned int SCR_WIDTH, SCR_HEIGHT;
 extern ResourceManager ResM;
+extern GameMove moveController;
 
 class SkyBox {
 public:
@@ -36,16 +38,15 @@ public:
 		ResM.loadShader("skybox", "./ShaderCode/2.skybox_shader.vs", "./ShaderCode/2.skybox_shader.fs");
 	};
 
-	void renderSkyBox(glm::mat4 view,glm::mat4 projection) {
+	void renderSkyBox(float time) {
 		// »æÖÆÌì¿ÕºÐ
 		Shader *shader = ResM.getShader("skybox");
 		shader->use();
-		//glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-		//glm::mat4 projection = glm::perspective(camera.Zoom, (float)WIDTH / (float)HEIGHT, 0.0f, 100.0f);
-		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"),
-			1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"),
-			1, GL_FALSE, glm::value_ptr(projection));
+		glm::mat4 view = glm::mat4(glm::mat3(moveController.getHumanCamera()->getView()));
+		glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
+		shader->setMat4("view", view);
+		shader->setMat4("projection", projection);
+		shader->setFloat("time", sin(time));
 
 		glBindVertexArray(VAO);
 		{

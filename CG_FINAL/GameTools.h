@@ -141,8 +141,6 @@ public:
 
 		// 地板
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -5.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		shader->setMat4("model", model);
 		ResM.getModel("place")->Draw(*shader);
 
@@ -157,7 +155,7 @@ public:
 		// 两种树
 		for (int i = 0; i < numOfTree; i++) {
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(treeX[i] - 50, -2.0f + (treeScale[i] - 1) * 3.0f, treeZ[i] - 50));
+			model = glm::translate(model, glm::vec3(treeX[i], 0.0f, treeZ[i]));
 			model = glm::scale(model, glm::vec3(treeScale[i], treeScale[i], treeScale[i]));
 			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			shader->setMat4("model", model);
@@ -165,7 +163,7 @@ public:
 		}
 		for (int i = 0; i < numOfTree3; i++) {
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(tree3X[i] - 50, (tree3Scale[i] - 1)*5.0f, tree3Z[i] - 50));
+			model = glm::translate(model, glm::vec3(tree3X[i], 0.0f, tree3Z[i]));
 			model = glm::scale(model, glm::vec3(tree3Scale[i], tree3Scale[i], tree3Scale[i]));
 			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			shader->setMat4("model", model);
@@ -175,7 +173,7 @@ public:
 		// 草
 		for (int i = 0; i < numOfGrass; i++) {
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(grassX[i] - 25, -5.0f, grassZ[i] - 25));
+			model = glm::translate(model, glm::vec3(grassX[i], 0.0f, grassZ[i]));
 			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
 			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			shader->setMat4("model", model);
@@ -185,7 +183,7 @@ public:
 		// 石头
 		for (int i = 0; i < numOfStone; i++) {
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(stoneX[i] - 50, -5.0f, stoneZ[i] - 50));
+			model = glm::translate(model, glm::vec3(stoneX[i], 0.0f, stoneZ[i]));
 			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
 			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			shader->setMat4("model", model);

@@ -88,7 +88,7 @@ int main()
 	// skybox module
 	SkyBox skybox;
 	// render director
-	GameTools director(glm::vec3(1.0f), 0.1, 0.5, 0.3);
+	GameTools director(glm::vec3(1.0f), 0.2, 0.5, 0.3);
 
 
     // build and compile shaders
@@ -142,15 +142,16 @@ int main()
 			reset_interval = 0.0f;
 		}
 
-        // render
-        // ------
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// initialize 
+		float time = currentFrame / 5;
+		glm::vec3 lightPos(100 * cos(time), 100 * sin(time), 1.0);
+
 		// render skybox
-		skybox.renderSkyBox(glm::mat4(glm::mat3(moveController.getHumanCamera()->getView())), glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f));
-		
-		glm::vec3 lightPos(100 * cos(currentFrame / 5), 100 * sin(currentFrame / 5), 1.0);
+		skybox.renderSkyBox(time);
+		// render scene
 		director.RenderDepthMap(lightPos);
 		director.RenderScene(lightPos);
 		//director.testMap(window);

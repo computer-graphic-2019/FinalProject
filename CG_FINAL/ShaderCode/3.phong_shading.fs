@@ -33,7 +33,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
    // Calculate bias (based on depth map resolution and slope) 
    vec3 normal = normalize(in_fs.Normal); 
    vec3 lightDir = normalize(light.position - in_fs.FragPos);
-   float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+   float bias = max(0.01 * (1.0 - dot(normal, lightDir)), 0.001);
 
    // PCF 
    vec2 texelSize = 0.2 / textureSize(shadowMap, 0);

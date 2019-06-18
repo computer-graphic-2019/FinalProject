@@ -3,9 +3,12 @@
 in vec3 TexCoords;
 out vec4 color;
  
+uniform float time;
 uniform samplerCube skybox;
  
 void main()
 {
-    color = texture(skybox, TexCoords);
+	float threshold = 0.2;
+	float fade = time > threshold ? time : threshold;
+    color = fade * texture(skybox, TexCoords);
 }
