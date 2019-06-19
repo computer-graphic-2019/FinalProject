@@ -20,6 +20,12 @@ extern unsigned int SCR_WIDTH, SCR_HEIGHT;
 extern ResourceManager ResM;
 extern GameMove moveController;
 
+extern std::map<std::string, GameObject> targetList;
+extern std::map<std::string, GameObject> movingTargetList;
+extern std::map<std::string, GameObject> explodeTargeList;
+extern std::map<std::string, bool> explodeTargeRec;
+extern std::deque<std::string> recoverList;
+
 int numOfTree = 50;
 int numOfTree3 = 50;
 int numOfGrass = 150;
@@ -50,6 +56,9 @@ public:
 		// 加载深度着色器
 		ResM.loadShader("debug", "./ShaderCode/debug.vs", "./ShaderCode/debug.fs");
 		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs");
+
+		// 加载物体着色器
+		ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs", "./ShaderCode/4.explode_shading.gs");
 
 		// 初始化阴影贴图
 		SHADOW_WIDTH = 4096;
@@ -126,6 +135,8 @@ public:
 		shader->setVec3("light.specular", specular_light);
 		shader->setVec3("light.position", lightPos);
 
+		shader->setBool("isExplode", false);
+
 		// clear
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
@@ -188,6 +199,21 @@ public:
 			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			shader->setMat4("model", model);
 			ResM.getModel("stone")->Draw(*shader);
+		}
+
+		// 爆炸靶子
+		for (std::map<std::string, bool>::iterator ptr = explodeTargeRec.begin(); ptr != explodeTargeRec.end(); ptr++) {
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(0.0f, 5.0f, -10.0f));
+			model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+			shader->setMat4("model", model);
+			if (ptr->second) {
+				shader->setBool("isExplode", true);
+				ResM.getModel("explodeTarget")->Draw((*shader));
+			}
+			else {
+				ResM.getModel("explodeTarget")->Draw((*shader));
+			}
 		}
 	}
 

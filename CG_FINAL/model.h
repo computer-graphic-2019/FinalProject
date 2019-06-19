@@ -64,6 +64,7 @@ private:
 			aiProcess_SortByPType | \
 			aiProcess_FindDegenerates | \
 			aiProcess_FindInvalidData | \
+			aiProcess_FlipUVs | \
 			0));
         // check for errors
         if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
