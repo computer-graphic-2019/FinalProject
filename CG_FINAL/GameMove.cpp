@@ -6,27 +6,27 @@ extern GameMove moveController;
 
 GameMove::GameMove() {
 	this->humanCamera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f));
-	this->cameraSpeed = 25.0f;
+	this->humanCamera->setSpeed(10.0f, 0.5f);
 }
 
 // 控制人物前移(w)
 void GameMove::humanMoveForward() {
-	this->humanCamera->ProcessKeyboard(UP, this->cameraSpeed);
+	this->humanCamera->ProcessKeyboard(UP, this->deltatime);
 }
 
 // 控制人物后退(s)
 void GameMove::humanMoveBackward() {
-	this->humanCamera->ProcessKeyboard(DOWN, this->cameraSpeed);
+	this->humanCamera->ProcessKeyboard(DOWN, this->deltatime);
 }
 
 // 控制人物左转(a)
 void GameMove::humanMoveLeft() {
-	this->humanCamera->ProcessKeyboard(LEFT, this->cameraSpeed);
+	this->humanCamera->ProcessKeyboard(LEFT, this->deltatime);
 }
 
 // 控制人物右转(d)
 void GameMove::humanMoveRight() {
-	this->humanCamera->ProcessKeyboard(RIGHT, this->cameraSpeed);
+	this->humanCamera->ProcessKeyboard(RIGHT, this->deltatime);
 }
 
 // 控制人物旋转
@@ -36,7 +36,7 @@ void GameMove::humanRotate(float xoffset, float yoffset) {
 
 // 人物移动总控制
 void GameMove::humanMove(GLFWwindow *window, float deltaTime) {
-	this->cameraSpeed = deltaTime;
+	this->deltatime = deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		humanMoveForward();
 	}

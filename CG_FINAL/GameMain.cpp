@@ -144,7 +144,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// initialize 
-		float time = currentFrame / 5;
+		float time = currentFrame / 10;
 		glm::vec3 lightPos(100 * cos(time), 100 * sin(time), 1.0);
 
 		// render skybox

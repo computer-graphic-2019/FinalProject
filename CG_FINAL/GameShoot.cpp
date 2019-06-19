@@ -33,7 +33,7 @@ GameShoot::GameShoot() {
 // 控制开枪（鼠标左键）
 void GameShoot::Fire() {
 	// 开镜后才能开枪
-	if (gunRaiseUp) {
+	if (true ||gunRaiseUp) {
 		firstTimeShowBullet = true;
 		this->isHit = false;
 	}

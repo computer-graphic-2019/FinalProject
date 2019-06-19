@@ -17,7 +17,7 @@ class GameMove {
 private:
     bool isGunRaiseUp = false;
 	Camera* humanCamera;
-	float cameraSpeed;
+	float deltatime;
 public:
 	GameMove();
     // 控制人物前移(w)
