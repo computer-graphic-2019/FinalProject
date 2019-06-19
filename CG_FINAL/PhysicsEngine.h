@@ -12,9 +12,6 @@
 #include <cmath>
 #include <vector>
 
-#define min(x,y) ((x) < (y) ? (x) : (y))
-#define max(x,y) ((x) < (y) ? (y) : (x))
-
 const float HeroHeight = 7.5f;           //玩家视点到脚的高度
 
 const float GravityAcceler = -9.8f;
@@ -71,12 +68,62 @@ public:
 	//按下space跳跃时调用
 	void jumpAndUpdateVelocity() {
 		velocity += glm::vec3(0.f, JumpInitialSpeed, 0.f);
-		accelerUp.y = 0.f;
+		accelerUp.y = 0.0f;
 	}
 
 	//每帧绘制的时候更新摄像机垂直方向移动
 	void updateCameraVertMovement(glm::vec3& cameraPos, glm::vec3& targetPos) {
+		glm::vec3 acceletation = this->gravity + this->accelerUp;
+		velocity += acceletation * GravityFactor;
+		cameraPos += velocity * JumpFactor;
+		targetPos += velocity * JumpFactor;
+		//检测所有碰撞体
+		for (int i = 0; i < innerBoundaryMin.size(); i++) {
+			//如果在XZ平面进入碰撞体所在区域
+			if (insideTheCollider(cameraPos, innerBoundaryMin[i], innerBoundaryMax[i])) {
+				//脚接触到碰撞体顶部
+				if (cameraPos.y - HeroHeight <= innerBoundaryMax[i].y
+					&& cameraPos.y >= innerBoundaryMax[i].y) {
+					isJumping = false;
+					accelerUp.y = -GravityAcceler;
+					velocity.y = 0.0f;
+					cameraPos.y = innerBoundaryMax[i].y + HeroHeight;
+					break;
+ 				}
 
+				if (cameraPos.y - HeroHeight <= innerBoundaryMin[i].y
+					&& cameraPos.y >= innerBoundaryMin[i].y) {
+					velocity.y = 0.0f;
+					cameraPos.y = innerBoundaryMin[i].y;
+					break;
+				}
+			}
+			else {
+				accelerUp.y = 0.0f;
+			}
+		}
+	}
+
+protected:
+
+	inline float Direction(glm::vec2& pi, glm::vec2& pj, glm::vec2& pk) {
+		return (pk.x - pi.x) * (pj.y - pi.y) - (pj.x - pi.x) * (pk.y - pi.y);
+	}
+
+	inline bool onSegment(glm::vec2& pi, glm::vec2& pj, glm::vec2& pk) {
+		return (std::min(pi.x, pj.x) <= pk.x) && (pk.x <= std::max(pi.x, pj.x))
+			&& (std::min(pi.y, pj.y) <= pk.y) && (pk.y <= std::max(pi.y, pj.y));
+	}
+
+	inline bool insideTheCollider(glm::vec3& cameraPos, glm::vec3& innerMin, glm::vec3& innerMax) {
+		float camX = cameraPos.x;
+		float camZ = cameraPos.z;
+		float minX = innerMin.x;
+		float minZ = innerMin.z;
+		float maxX = innerMax.x;
+		float maxZ = innerMax.z;
+
+		return (minX <= camX && camX <= maxX && minZ <= camZ && camZ <= maxZ);
 	}
 
 private:
@@ -87,15 +134,6 @@ private:
 			glm::vec2 obj1XZ(obj1.x, obj1.z), obj2XZ(obj2.x, obj2.z);
 			inCollisionTestXZ(obj1XZ, obj2XZ, cameraPos, targetPos);
 		}
-	}
-
-	inline float Direction(glm::vec2& pi, glm::vec2& pj, glm::vec2& pk) {
-		return (pk.x - pi.x) * (pj.y - pi.y) - (pj.x - pi.x) * (pk.y - pi.y);
-	}
-
-	inline bool onSegment(glm::vec2& pi, glm::vec2& pj, glm::vec2& pk) {
-		return (min(pi.x, pj.x) <= pk.x) && (pk.x <= max(pi.x, pj.x))
-			&& (min(pi.y, pj.y) <= pk.y) && (pk.y <= max(pi.y, pj.y));
 	}
 
 	// 线段相交快速算法
