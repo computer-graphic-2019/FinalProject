@@ -12,27 +12,27 @@ GameMove::GameMove() {
 
 // 控制人物前移(w)
 void GameMove::humanMoveForward() {
-	this->humanCamera->ProcessKeyboard(UP, this->deltatime);
+	this->humanCamera->ProcessKeyboard(UP, this->deltatime, this->jumpTimes);
 }
 
 // 控制人物后退(s)
 void GameMove::humanMoveBackward() {
-	this->humanCamera->ProcessKeyboard(DOWN, this->deltatime);
+	this->humanCamera->ProcessKeyboard(DOWN, this->deltatime, this->jumpTimes);
 }
 
 // 控制人物左转(a)
 void GameMove::humanMoveLeft() {
-	this->humanCamera->ProcessKeyboard(LEFT, this->deltatime);
+	this->humanCamera->ProcessKeyboard(LEFT, this->deltatime, this->jumpTimes);
 }
 
 // 控制人物右转(d)
 void GameMove::humanMoveRight() {
-	this->humanCamera->ProcessKeyboard(RIGHT, this->deltatime);
+	this->humanCamera->ProcessKeyboard(RIGHT, this->deltatime, this->jumpTimes);
 }
 
 // 控制人物跳跃
 void GameMove::humanJump() {
-	this->humanCamera->ProcessKeyboard(JUMP, this->deltatime);
+	this->humanCamera->ProcessKeyboard(JUMP, this->deltatime, this->jumpTimes);
 }
 
 // 控制人物旋转
@@ -44,6 +44,7 @@ void GameMove::humanRotate(float xoffset, float yoffset) {
 void GameMove::humanMove(GLFWwindow *window, float deltaTime) {
 	this->deltatime = deltaTime;
 	bool anyKeyPress = false;
+	this->jumpTimes = 1;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		humanMoveForward();
 		anyKeyPress = true;

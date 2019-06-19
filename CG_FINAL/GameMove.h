@@ -19,6 +19,7 @@ private:
     bool isGunRaiseUp = false;
 	Camera* humanCamera;
 	float deltatime;
+	int jumpTimes;
 public:
 	GameMove();
     // 控制人物前移(w)

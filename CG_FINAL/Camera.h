@@ -124,19 +124,22 @@ public:
 		cameraPos.y = 5.0f;
 	};
 	*/
-	void ProcessKeyboard(MOVE_DIRECTION direction, float deltaTime) {
+	void ProcessKeyboard(MOVE_DIRECTION direction, float deltaTime, int& times) {
 		HandleHoriMove(direction, deltaTime);
-		HandleVertMove(direction, deltaTime);
+		HandleVertMove(direction, deltaTime, times);
 	}
 
-	void HandleVertMove(MOVE_DIRECTION direction, float deltaTime) {
+	void HandleVertMove(MOVE_DIRECTION direction, float deltaTime, int& times) {
 		if (direction == JUMP) {
 			if (!physicsEngine.isJumping) {
 				physicsEngine.jumpAndUpdateVelocity();
 			}
 			physicsEngine.isJumping = true;
 		}
-		physicsEngine.updateCameraVertMovement(cameraPos, targetPos);
+		if (times > 0) {
+			physicsEngine.updateCameraVertMovement(cameraPos, targetPos);
+			times--;
+		}
 	}
 
 	void HandleHoriMove(MOVE_DIRECTION direction, float deltaTime) {
