@@ -3,6 +3,7 @@
 extern unsigned int SCR_WIDTH, SCR_HEIGHT;
 extern ResourceManager ResM;
 extern GameMove moveController;
+extern PhysicsEngine physicsEngine;
 
 GameMove::GameMove() {
 	this->humanCamera = new Camera(glm::vec3(0.0f, 5.0f, 0.0f));
@@ -42,19 +43,27 @@ void GameMove::humanRotate(float xoffset, float yoffset) {
 // 人物移动总控制
 void GameMove::humanMove(GLFWwindow *window, float deltaTime) {
 	this->deltatime = deltaTime;
+	bool anyKeyPress = false;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		humanMoveForward();
+		anyKeyPress = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 		humanMoveBackward();
+		anyKeyPress = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 		humanMoveLeft();
+		anyKeyPress = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		humanMoveRight();
-	}	
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+		anyKeyPress = true;
+	}
+	if (!physicsEngine.isJumping && glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+		humanJump();
+	}
+	if (!anyKeyPress && physicsEngine.isJumping) {
 		humanJump();
 	}
 }

@@ -157,8 +157,8 @@ public:
 
 		if (dz != 0 || dx != 0) {
 			// 行走不改变y轴
-			glm::vec3 forward = glm::vec3(this->cameraFront.x, 0.0f, this->cameraFront.z);//this->cameraFront;
-			glm::vec3 strafe = glm::vec3(this->cameraRight.x, 0.0f, this->cameraRight.z);//this->cameraRight;
+			glm::vec3 forward = glm::vec3(this->cameraFront.x, 0.0f, this->cameraFront.z);
+			glm::vec3 strafe = glm::vec3(this->cameraRight.x, 0.0f, this->cameraRight.z);
 
 			cameraPos += (dz * forward + dx * strafe);
 			targetPos = cameraPos + (dz * forward + dx * strafe) * 1.1f;

@@ -10,6 +10,7 @@
 
 #include "Camera.h"
 #include "GameResource.h"
+#include "PhysicsEngine.h"
 
 #include <iostream>
 
