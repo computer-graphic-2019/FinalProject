@@ -18,11 +18,16 @@
 #include <algorithm>
 #include <map>
 
+#include "PhysicsEngine.h"
+
+extern PhysicsEngine physicsEngine;
+
 enum MOVE_DIRECTION {
 	UP,
 	DOWN,
 	LEFT,
-	RIGHT
+	RIGHT,
+	JUMP
 };
 
 class Camera {
@@ -32,6 +37,7 @@ private:
 	glm::vec3 cameraUp;
 	glm::vec3 cameraRight;
 	glm::vec3 worldUp;
+	glm::vec3 targetPos;
 
 	float yaw;
 	float pitch;
@@ -67,6 +73,7 @@ public:
 		float YAW = -90.0f, float PITCH = 0.0f, float ZOOM = 45.0f){
 		
 		cameraPos = position;
+		targetPos = cameraPos + glm::vec3(0.0f, 0.0f, 5.0f);
 		worldUp = up;
 
 		// yaw is initialized to -90.0 degrees since a yaw of 0.0 
@@ -83,7 +90,7 @@ public:
 
 		updateVector();
 	};
-
+	/*
 	void moveForward(float cameraSpeed) {
 		cameraPos += cameraSpeed * this->cameraFront;
 	};
@@ -99,7 +106,7 @@ public:
 	void moveRight(float cameraSpeed) {
 		cameraPos += this->cameraRight * cameraSpeed;
 	};
-
+	
 	void ProcessKeyboard(MOVE_DIRECTION direction, float deltaTime) {
 		float cameraSpeed = this->MovementSpeed * deltaTime;
 		if (direction == UP) {
@@ -116,6 +123,51 @@ public:
 		}
 		cameraPos.y = 5.0f;
 	};
+	*/
+	void ProcessKeyboard(MOVE_DIRECTION direction, float deltaTime) {
+		HandleHoriMove(direction, deltaTime);
+		HandleVertMove(direction, deltaTime);
+	}
+
+	void HandleVertMove(MOVE_DIRECTION direction, float deltaTime) {
+		if (direction == JUMP) {
+			if (!physicsEngine.isJumping) {
+				physicsEngine.jumpAndUpdateVelocity();
+			}
+			physicsEngine.isJumping = true;
+		}
+		physicsEngine.updateCameraVertMovement(cameraPos, targetPos);
+	}
+
+	void HandleHoriMove(MOVE_DIRECTION direction, float deltaTime) {
+		float dx = 0, dz = 0;
+		float cameraSpeed = this->MovementSpeed * deltaTime;
+		if (direction == UP) {
+			dz += cameraSpeed;
+		}
+		if (direction == DOWN) {
+			dz -= cameraSpeed;
+		}
+		if (direction == LEFT) {
+			dx -= cameraSpeed;
+		}
+		if (direction == RIGHT) {
+			dx += cameraSpeed;
+		}
+
+		if (dz != 0 || dx != 0) {
+			// 行走不改变y轴
+			glm::vec3 forward = glm::vec3(this->cameraFront.x, 0.0f, this->cameraFront.z);//this->cameraFront;
+			glm::vec3 strafe = glm::vec3(this->cameraRight.x, 0.0f, this->cameraRight.z);//this->cameraRight;
+
+			cameraPos += (dz * forward + dx * strafe);
+			targetPos = cameraPos + (dz * forward + dx * strafe) * 1.1f;
+
+			//每次做完坐标变换后，先进行碰撞检测来调整坐标
+			physicsEngine.outCollisionTest(cameraPos, targetPos);
+			physicsEngine.inCollisionTest(cameraPos, targetPos);
+		}
+	}
 
 	void ProcessMouseMove(double xoffset, double yoffset) {
 		

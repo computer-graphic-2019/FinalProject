@@ -12,15 +12,15 @@
 #include <cmath>
 #include <vector>
 
-const float HeroHeight = 7.5f;           //玩家视点到脚的高度
+const float HeroHeight = 5.0f;           //玩家视点到脚的高度
 
 const float GravityAcceler = -9.8f;
 
 const float MoveSpeed = 0.15f;           //玩家移动速度
 const float BoundaryGap = 1.0f;          //碰撞间距
 const float JumpInitialSpeed = 12.0f;    //起跳初速度
-const float JumpFactor = 0.04f;          //跳起速度系数
-const float GravityFactor = 0.04f;       //下落速度系数
+const float JumpFactor = 0.1f;          //跳起速度系数
+const float GravityFactor = 0.1f;       //下落速度系数
 
 class PhysicsEngine {
 public:
@@ -37,8 +37,8 @@ public:
 	}
 
 	//设置空间外部边缘(整个场景的最外围)
-	void setSceneOuterBoundary(float x1, float z1, float x2, float z2) {
-		outerBoundary = glm::vec4(x1, z1, x2, z2);
+	void setSceneOuterBoundary(glm::vec2 point1, glm::vec2 point2) {
+		outerBoundary = glm::vec4(point1, point2);
 	}
 
 	//外部碰撞检测
@@ -48,9 +48,9 @@ public:
 	}
 
 	//设置空间内部边缘（场景内部的边缘）
-	void setSceneInnerBoundary(float x1, float y1, float z1, float x2, float y2, float z2) {
-		glm::vec3 key(x1 - BoundaryGap, y1 - BoundaryGap, z1 - BoundaryGap);
-		glm::vec3 value(x2 + BoundaryGap, y2 + BoundaryGap, z2 + BoundaryGap);
+	void setSceneInnerBoundary(glm::vec3 angle1, glm::vec3 angle2) {
+		glm::vec3 key = angle1 - glm::vec3(BoundaryGap);
+		glm::vec3 value = angle2 + glm::vec3(BoundaryGap);
 
 		innerBoundaryMin.push_back(key);
 		innerBoundaryMax.push_back(value);

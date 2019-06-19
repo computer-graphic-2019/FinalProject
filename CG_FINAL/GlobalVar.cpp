@@ -3,6 +3,7 @@
 #include "GameMove.h"
 #include "GameShoot.h"
 #include "GameObject.h"
+#include "PhysicsEngine.h"
 
 #include <deque>
 
@@ -22,6 +23,7 @@ bool gunRaiseUp = false;
 ResourceManager ResM;
 GameMove moveController;
 GameShoot shootController;
+PhysicsEngine physicsEngine;
 
 // timing
 float deltaTime = 0.0f;

@@ -28,6 +28,8 @@ public:
     void humanMoveLeft();
     // 控制人物右转(d)
     void humanMoveRight();
+	// 控制人物跳跃
+	void humanJump();
     // 人物移动总控制
 	void humanRotate(float x, float y);
     void humanMove(GLFWwindow *window, float deltaTime);

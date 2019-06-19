@@ -21,6 +21,7 @@ extern unsigned int SCR_WIDTH, SCR_HEIGHT;
 extern ResourceManager ResM;
 extern GameMove moveController;
 extern GameShoot shootController;
+extern PhysicsEngine physicsEngine;
 extern float deltaTime, lastFrame;
 extern bool gunRaiseUp;
 
@@ -115,6 +116,10 @@ int main()
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	shootController.initialTextShader();
+
+	// set boundary
+	// …Ë÷√µÿ∞Â≈ˆ◊≤∫–
+	physicsEngine.setSceneInnerBoundary(glm::vec3(-200.0f, 0.0f, -200.0f), glm::vec3(200.0f, 0.0f, 200.0f));
 
     // render loop
     // -----------

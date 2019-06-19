@@ -5,7 +5,7 @@ extern ResourceManager ResM;
 extern GameMove moveController;
 
 GameMove::GameMove() {
-	this->humanCamera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f));
+	this->humanCamera = new Camera(glm::vec3(0.0f, 5.0f, 0.0f));
 	this->humanCamera->setSpeed(10.0f, 0.5f);
 }
 
@@ -29,6 +29,11 @@ void GameMove::humanMoveRight() {
 	this->humanCamera->ProcessKeyboard(RIGHT, this->deltatime);
 }
 
+// 控制人物跳跃
+void GameMove::humanJump() {
+	this->humanCamera->ProcessKeyboard(JUMP, this->deltatime);
+}
+
 // 控制人物旋转
 void GameMove::humanRotate(float xoffset, float yoffset) {
 	this->humanCamera->ProcessMouseMove(xoffset, yoffset);
@@ -49,6 +54,9 @@ void GameMove::humanMove(GLFWwindow *window, float deltaTime) {
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		humanMoveRight();
 	}	
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+		humanJump();
+	}
 }
 
 Camera* GameMove::getHumanCamera() const {
