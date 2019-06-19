@@ -53,12 +53,19 @@ public:
 		this->diffuse_light = diffuse * light;
 		this->specular_light = specular * light;
 
-		// 加载深度着色器
+		// 加载着色器
 		ResM.loadShader("debug", "./ShaderCode/debug.vs", "./ShaderCode/debug.fs");
 		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs");
-
-		// 加载物体着色器
 		ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs", "./ShaderCode/4.explode_shading.gs");
+
+		// 加载模型
+		ResM.loadModel("place", "./models/place/scene.obj");
+		ResM.loadModel("target", "./models/target/target.obj");
+		ResM.loadModel("explodeTarget", "./models/explodeTarget/explodeTarget.obj");
+		ResM.loadModel("tree", "./models/scene/tree.obj");
+		ResM.loadModel("tree3", "./models/scene/tree3.obj");
+		ResM.loadModel("grass", "./models/scene/grass.obj");
+		ResM.loadModel("stone", "./models/scene/stone.obj");
 
 		// 初始化阴影贴图
 		SHADOW_WIDTH = 4096;
@@ -157,7 +164,7 @@ public:
 
 		// 靶子
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 1.0f, -10.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 5.0f, -10.0f));
 		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		shader->setMat4("model", model);
