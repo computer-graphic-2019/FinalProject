@@ -96,17 +96,9 @@ int main()
     // -------------------------
 	ResM.loadShader("textShader", "./ShaderCode/5.text_loading.vs", "./ShaderCode/5.text_loading.fs");
     // load models
-    // -----------
-	ResM.loadModel("place", "./models/place/scene.obj");
-	ResM.loadModel("target", "./models/target/target.obj");
 	ResM.loadModel("gun", "./models/gun/m24.obj");
 	ResM.loadModel("gunOnFire", "./models/gun/m24OnFire.obj");
 	ResM.loadModel("bullet", "./models/bullet/bullet.obj");
-	ResM.loadModel("explodeTarget", "./models/explodeTarget/explodeTarget.obj");
-	ResM.loadModel("tree", "./models/scene/tree.obj");
-	ResM.loadModel("tree3", "./models/scene/tree3.obj");
-	ResM.loadModel("grass", "./models/scene/grass.obj");
-	ResM.loadModel("stone", "./models/scene/stone.obj");
 
 	// target position
 	targetList.insert(std::pair<std::string, GameObject>("target", GameObject(glm::vec3(-0.3f, 0.1f, -20.0f), glm::vec3(0.8f,1.0f,2.0f))));
