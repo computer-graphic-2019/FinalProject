@@ -33,7 +33,7 @@ GameShoot::GameShoot() {
 // 控制开枪（鼠标左键）
 void GameShoot::Fire() {
 	// 开镜后才能开枪
-	if (true ||gunRaiseUp) {
+	if (gunRaiseUp) {
 		firstTimeShowBullet = true;
 		this->isHit = false;
 	}
@@ -46,7 +46,7 @@ void GameShoot::showBullet(float deltaTime) {
 		firstTimeShowBullet = false;
 	}
 	else {
-		bulletPos = bulletPos + 0.1f * direction;
+		bulletPos = bulletPos + 0.5f * direction;
 	}
 	// 子弹轨迹
 	this->bullet.Position = bulletPos;
