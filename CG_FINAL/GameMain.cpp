@@ -93,8 +93,6 @@ int main()
 
     // build and compile shaders
     // -------------------------
-	ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs");
-	ResM.loadShader("explodeModel", "./ShaderCode/4.explode_shading.vs", "./ShaderCode/4.explode_shading.fs", "./ShaderCode/4.explode_shading.gs");
 	ResM.loadShader("textShader", "./ShaderCode/5.text_loading.vs", "./ShaderCode/5.text_loading.fs");
     // load models
     // -----------
@@ -155,34 +153,6 @@ int main()
 		director.RenderDepthMap(lightPos);
 		director.RenderScene(lightPos);
 		//director.testMap(window);
-
-		// explode target
-		glm::vec3 viewPos = moveController.getHumanCamera()->getPosition();
-		glm::mat4 view = moveController.getHumanCamera()->getView();
-		glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-		model = glm::translate(model, glm::vec3(7.0f, 3.0f, -10.0f));
-		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-		for (std::map<std::string, bool>::iterator ptr = explodeTargeRec.begin(); ptr != explodeTargeRec.end(); ptr++) {
-			if (ptr->second) {
-				ResM.getShader("explodeModel")->use();
-				ResM.getShader("explodeModel")->setMat4("gunRotate", glm::mat4(1.0f));
-				ResM.getShader("explodeModel")->setMat4("projection", projection);
-				ResM.getShader("explodeModel")->setMat4("view", view);
-				ResM.getShader("explodeModel")->setVec3("viewPos", viewPos);
-				ResM.getShader("explodeModel")->setVec3("lightDirection", cos(glfwGetTime()), -0.5f, sin(glfwGetTime()));
-				// add time component to geometry shader in the form of a uniform
-				ResM.getShader("explodeModel")->setFloat("time", 1.0f); //爆炸效果改这里
-				ResM.getShader("explodeModel")->setMat4("model", model);
-				ResM.getModel("explodeTarget")->Draw((*ResM.getShader("explodeModel")));
-			}
-			else {
-				ResM.getShader("model")->setMat4("model", model);
-				ResM.getModel("explodeTarget")->Draw((*ResM.getShader("model")));
-			}
-		}
 		
 		// raise up gun
 		moveController.gunMove(gunRaiseUp);
