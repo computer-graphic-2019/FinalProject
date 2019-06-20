@@ -56,7 +56,9 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-   vec3 diffuse_color = texture(texture_diffuse1, in_fs.TexCoords).rgb;
+   float gamma = 2.2;
+   vec3 diffuse_color = pow(texture(texture_diffuse1, in_fs.TexCoords).rgb, vec3(gamma));
+   //vec3 diffuse_color = texture(texture_diffuse1, in_fs.TexCoords).rgb;
    vec3 specular_color = texture(texture_specular1, in_fs.TexCoords).rgb;
    //ambient
    vec3 ambient = light.ambient;
