@@ -84,6 +84,8 @@ int main()
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
+	// Face Culling
+	glEnable(GL_CULL_FACE);
 	//glEnable(GL_FRAMEBUFFER_SRGB);
 
 	// skybox module
