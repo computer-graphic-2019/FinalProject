@@ -62,7 +62,7 @@ public:
 		ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs", "./ShaderCode/4.explode_shading.gs");
 
 		// 加载模型
-		ResM.loadModel("place", "./models/place/scene1.obj");
+		ResM.loadModel("place", "./models/place/scene2.obj");
 		ResM.loadModel("target", "./models/target/target.obj");
 		ResM.loadModel("explodeTarget", "./models/explodeTarget/explodeTarget.obj");
 		ResM.loadModel("tree", "./models/scene/tree.obj");
@@ -118,16 +118,32 @@ public:
 			float scale = rand() % 20 / (float)40 + 1.0;
 			stoneX.push_back(x);
 			stoneZ.push_back(z);
-			//physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 3.0f, z - 2.0f), glm::vec3(x + 2.0f, 3.0f, z + 2.0f));
 		}
 
+		// set boundary
+		// 设置地板碰撞盒
+		physicsEngine.setSceneInnerBoundary(glm::vec3(-60.0f, 0.0f, -60.0f), glm::vec3(60.0f, 0.0f, 60.0f));
+		physicsEngine.setSceneOuterBoundary(glm::vec2(-60.0f, -60.0f), glm::vec2(60.0f, 60.0f));
+
 		// 阶梯
-		int x = -40, z = -18, y = 1;
-		for (int i = 0; i < 9; i++) {
-			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 8.0f, y - 1.0f, z - 1.0f), glm::vec3(x + 8.0f, y + 1.0f, z + 1.0f));
-			z += 2;
-			y += 2;
+		int x = -34, z = -16, y = 1;
+		for (int i = 0; i < 4; i++) {
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 6.0f, y - 5.0f, z - 2.0f), glm::vec3(x + 6.0f, y + 1.0f, z + 2.0f));
+			z += 5;
+			y += 6;
 		}
+		z = 16;
+		y = 1;
+		for (int i = 0; i < 4; i++) {
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 6.0f, y - 5.0f, z - 2.0f), glm::vec3(x + 6.0f, y + 1.0f, z + 2.0f));
+			z -= 5;
+			y += 6;
+		}
+
+		// 中部平台
+		glm::vec3 platform(16.0f, 10.0f, 0.0f);
+		physicsEngine.setSceneInnerBoundary(glm::vec3(platform.x - 44.0f, platform.y - 10.0f, platform.z - 18.0f), 
+			glm::vec3(platform.x + 44.0f, platform.y + 10.0f, platform.z + 18.0f));
 	}
 	// 深度贴图
 	void RenderDepthMap(glm::vec3 lightPos) {

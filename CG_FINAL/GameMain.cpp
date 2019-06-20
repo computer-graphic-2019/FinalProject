@@ -109,11 +109,6 @@ int main()
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	shootController.initialTextShader();
 
-	// set boundary
-	// …Ë÷√µÿ∞Â≈ˆ◊≤∫–
-	physicsEngine.setSceneInnerBoundary(glm::vec3(-50.0f, 0.0f, -50.0f), glm::vec3(50.0f, 0.0f, 50.0f));
-	physicsEngine.setSceneOuterBoundary(glm::vec2(-50.0f, -50.0f), glm::vec2(50.0f, 50.0f));
-
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
