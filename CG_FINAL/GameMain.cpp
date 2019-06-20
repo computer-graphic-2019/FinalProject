@@ -111,7 +111,8 @@ int main()
 
 	// set boundary
 	// …Ë÷√µÿ∞Â≈ˆ◊≤∫–
-	physicsEngine.setSceneInnerBoundary(glm::vec3(-200.0f, 0.0f, -200.0f), glm::vec3(200.0f, 0.0f, 200.0f));
+	physicsEngine.setSceneInnerBoundary(glm::vec3(-100.0f, 0.0f, -100.0f), glm::vec3(100.0f, 0.0f, 100.0f));
+	physicsEngine.setSceneOuterBoundary(glm::vec2(-100.0f, -100.0f), glm::vec2(100.0f, 100.0f));
 
     // render loop
     // -----------

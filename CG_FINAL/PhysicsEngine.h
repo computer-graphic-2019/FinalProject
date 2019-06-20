@@ -16,7 +16,6 @@ const float HeroHeight = 5.0f;           //玩家视点到脚的高度
 
 const float GravityAcceler = -9.8f;
 
-const float MoveSpeed = 0.15f;           //玩家移动速度
 const float BoundaryGap = 1.0f;          //碰撞间距
 const float JumpInitialSpeed = 12.0f;    //起跳初速度
 const float JumpFactor = 0.1f;          //跳起速度系数
@@ -130,7 +129,7 @@ private:
 
 	//空间内部边缘碰撞检测（考虑高度）
 	void inCollisionTestWithHeight(glm::vec3& obj1, glm::vec3& obj2, glm::vec3& cameraPos, glm::vec3& targetPos) {
-		if (!(cameraPos.y <= obj1.y || cameraPos.y >= obj2.y)) {
+		if (!(cameraPos.y <= obj1.y || cameraPos.y - HeroHeight >= obj2.y)) {
 			glm::vec2 obj1XZ(obj1.x, obj1.z), obj2XZ(obj2.x, obj2.z);
 			inCollisionTestXZ(obj1XZ, obj2XZ, cameraPos, targetPos);
 		}
@@ -218,8 +217,10 @@ private:
 	}
 
 	//空间外部边缘碰撞检测
-	void outCollisionTestXZ(glm::vec2& obj1, glm::vec2& obj2, glm::vec3& cameraPos, glm::vec3& targetPos) {
+	void outCollisionTestXZ(glm::vec2 obj1, glm::vec2 obj2, glm::vec3& cameraPos, glm::vec3& targetPos) {
 		
+		const float collisionThres = 0.55;
+
 		//先设置包围盒：比空间外部边缘小一点
 		obj1.x += obj1.x < 0 ? 2 : -2;
 		obj2.x += obj2.x < 0 ? 2 : -2;
@@ -240,31 +241,36 @@ private:
 			targetPos.z = obj2.y;
 		}
 
+		//std::cout << "CamPos: " << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
+		//std::cout << "TarPos: " << targetPos.x << " " << targetPos.y << " " << targetPos.z << std::endl;
+
 		// 计算摄像机与目标的距离
-		float distance = sqrt(pow((cameraPos.x - targetPos.x), 2)+pow((cameraPos.z - targetPos.z),2));
-		
+		float distance = sqrt(pow((cameraPos.x - targetPos.x),2) + pow((cameraPos.z - targetPos.z),2));
+
+		std::cout << "distance: " << distance << std::endl;
+
 		//若视点与目标距离太小，则固定目标位置，视点沿正对目标的逆方向移动
-		if (distance <= 2.0f) {
-			cameraPos.x = 2.0f * (cameraPos.x - targetPos.x) / distance + targetPos.x;
-			cameraPos.z = 2.0f * (cameraPos.z - targetPos.z) / distance + targetPos.z;
+		if (distance <= collisionThres) {
+			cameraPos.x = collisionThres * (cameraPos.x - targetPos.x) / distance + targetPos.x;
+			cameraPos.z = collisionThres * (cameraPos.z - targetPos.z) / distance + targetPos.z;
 		}
 
 		bool isOutOfRange = false;
 		//再次检测视点位置是否出了包围盒，先放回来
-		if (targetPos.x < obj1.x) {
-			targetPos.x = obj1.x;
+		if (cameraPos.x < obj1.x) {
+			cameraPos.x = obj1.x;
 			isOutOfRange = true;
 		}
-		if (targetPos.x > obj2.x) {
-			targetPos.x = obj2.x;
+		if (cameraPos.x > obj2.x) {
+			cameraPos.x = obj2.x;
 			isOutOfRange = true;
 		}
-		if (targetPos.z < obj1.y) {
-			targetPos.z = obj1.y;
+		if (cameraPos.z < obj1.y) {
+			cameraPos.z = obj1.y;
 			isOutOfRange = true;
 		}
-		if (targetPos.z > obj2.y) {
-			targetPos.z = obj2.y;
+		if (cameraPos.z > obj2.y) {
+			cameraPos.z = obj2.y;
 			isOutOfRange = true;
 		}
 
@@ -272,9 +278,9 @@ private:
 		if (isOutOfRange) {
 			distance = sqrt(pow((cameraPos.x - targetPos.x), 2) + pow((cameraPos.z - targetPos.z), 2));
 
-			if (distance <= 2.0f) {
-				cameraPos.x = 2.0f * (cameraPos.x - targetPos.x) / distance + targetPos.x;
-				cameraPos.z = 2.0f * (cameraPos.z - targetPos.z) / distance + targetPos.z;
+			if (distance <= collisionThres) {
+				targetPos.x = collisionThres * (targetPos.x - cameraPos.x) / distance + cameraPos.x;
+				targetPos.z = collisionThres * (targetPos.z - cameraPos.z) / distance + cameraPos.z;
 			}
 		}
 	}

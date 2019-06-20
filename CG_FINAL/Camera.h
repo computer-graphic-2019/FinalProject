@@ -73,7 +73,7 @@ public:
 		float YAW = -90.0f, float PITCH = 0.0f, float ZOOM = 45.0f){
 		
 		cameraPos = position;
-		targetPos = cameraPos + glm::vec3(0.0f, 0.0f, 5.0f);
+		targetPos = cameraPos + glm::vec3(5.0f, 5.0f, 5.0f);
 		worldUp = up;
 
 		// yaw is initialized to -90.0 degrees since a yaw of 0.0 
@@ -127,6 +127,7 @@ public:
 	void ProcessKeyboard(MOVE_DIRECTION direction, float deltaTime, int& times) {
 		HandleHoriMove(direction, deltaTime);
 		HandleVertMove(direction, deltaTime, times);
+		std::cout << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
 	}
 
 	void HandleVertMove(MOVE_DIRECTION direction, float deltaTime, int& times) {
@@ -164,7 +165,7 @@ public:
 			glm::vec3 strafe = glm::vec3(this->cameraRight.x, 0.0f, this->cameraRight.z);
 
 			cameraPos += (dz * forward + dx * strafe);
-			targetPos = cameraPos + (dz * forward + dx * strafe) * 1.1f;
+			targetPos = cameraPos + (dz * forward + dx * strafe) * 1.5f;
 
 			//每次做完坐标变换后，先进行碰撞检测来调整坐标
 			physicsEngine.outCollisionTest(cameraPos, targetPos);
