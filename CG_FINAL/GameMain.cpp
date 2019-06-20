@@ -111,8 +111,8 @@ int main()
 
 	// set boundary
 	// …Ë÷√µÿ∞Â≈ˆ◊≤∫–
-	physicsEngine.setSceneInnerBoundary(glm::vec3(-100.0f, 0.0f, -100.0f), glm::vec3(100.0f, 0.0f, 100.0f));
-	physicsEngine.setSceneOuterBoundary(glm::vec2(-100.0f, -100.0f), glm::vec2(100.0f, 100.0f));
+	physicsEngine.setSceneInnerBoundary(glm::vec3(-50.0f, 0.0f, -50.0f), glm::vec3(50.0f, 0.0f, 50.0f));
+	physicsEngine.setSceneOuterBoundary(glm::vec2(-50.0f, -50.0f), glm::vec2(50.0f, 50.0f));
 
     // render loop
     // -----------
@@ -142,8 +142,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// initialize 
-		float time = currentFrame / 10;
-		glm::vec3 lightPos(100 * cos(time), 100 * sin(time), 1.0);
+		float time = currentFrame / 30;
+		glm::vec3 lightPos(200 * cos(time), 200 * sin(time), 1.0);
 
 		// render skybox
 		skybox.renderSkyBox(time);
