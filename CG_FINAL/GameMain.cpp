@@ -84,6 +84,8 @@ int main()
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
+	// Face Culling
+	glEnable(GL_CULL_FACE);
 	//glEnable(GL_FRAMEBUFFER_SRGB);
 
 	// skybox module
@@ -108,11 +110,6 @@ int main()
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	shootController.initialTextShader();
-
-	// set boundary
-	// …Ë÷√µÿ∞Â≈ˆ◊≤∫–
-	physicsEngine.setSceneInnerBoundary(glm::vec3(-50.0f, 0.0f, -50.0f), glm::vec3(50.0f, 0.0f, 50.0f));
-	physicsEngine.setSceneOuterBoundary(glm::vec2(-50.0f, -50.0f), glm::vec2(50.0f, 50.0f));
 
     // render loop
     // -----------

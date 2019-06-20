@@ -158,7 +158,6 @@ private:
 
 	//空间内部边缘碰撞检测（不考虑高度，即XZ平面）
 	void inCollisionTestXZ(glm::vec2& obj1, glm::vec2& obj2, glm::vec3& cameraPos, glm::vec3& targetPos) {
-		const float d = 2.0f;
 		float tarX = targetPos.x, tarZ = targetPos.z,
 			camX = cameraPos.x, camZ = cameraPos.z;
 		float len = sqrt(pow(tarX - camX, 2) + pow(tarZ - camZ, 2));
@@ -219,7 +218,7 @@ private:
 	//空间外部边缘碰撞检测
 	void outCollisionTestXZ(glm::vec2 obj1, glm::vec2 obj2, glm::vec3& cameraPos, glm::vec3& targetPos) {
 		
-		const float collisionThres = 0.20f;
+		const float collisionThres = 0.23f;
 
 		//先设置包围盒：比空间外部边缘小一点
 		obj1.x += obj1.x < 0 ? 2 : -2;
