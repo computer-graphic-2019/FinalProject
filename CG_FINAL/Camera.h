@@ -127,7 +127,7 @@ public:
 	void ProcessKeyboard(MOVE_DIRECTION direction, float deltaTime, int& times) {
 		HandleHoriMove(direction, deltaTime);
 		HandleVertMove(direction, deltaTime, times);
-		std::cout << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
+		//std::cout << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
 	}
 
 	void HandleVertMove(MOVE_DIRECTION direction, float deltaTime, int& times) {

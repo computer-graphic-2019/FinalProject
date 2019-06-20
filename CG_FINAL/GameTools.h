@@ -14,11 +14,14 @@
 #include "SkyBox.h"
 #include "GameShoot.h"
 
+#include "PhysicsEngine.h"
+
 #include <vector>
 
 extern unsigned int SCR_WIDTH, SCR_HEIGHT;
 extern ResourceManager ResM;
 extern GameMove moveController;
+extern PhysicsEngine physicsEngine;
 
 extern std::map<std::string, GameObject> targetList;
 extern std::map<std::string, GameObject> movingTargetList;
@@ -26,8 +29,8 @@ extern std::map<std::string, GameObject> explodeTargeList;
 extern std::map<std::string, bool> explodeTargeRec;
 extern std::deque<std::string> recoverList;
 
-int numOfTree = 50;
-int numOfTree3 = 50;
+int numOfTree = 1;
+int numOfTree3 = 1;
 int numOfGrass = 150;
 int numOfStone = 150;
 
@@ -87,22 +90,41 @@ public:
 
 		// 随机位置参数
 		for (int i = 0; i < numOfTree; i++) {
-			treeX.push_back(rand() % (2 * coveLength) - coveLength);
-			treeZ.push_back(rand() % (2 * coverWidth) - coverWidth);
-			treeScale.push_back(rand() % 20 / (float)40 + 1.0);
+			int x = rand() % (2 * coveLength) - coveLength;
+			int z = rand() % (2 * coverWidth) - coverWidth;
+			float scale = rand() % 20 / (float)40 + 1.0;
+			treeX.push_back(x);
+			treeZ.push_back(z);
+			treeScale.push_back(scale);
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
 		}
 		for (int i = 0; i < numOfTree3; i++) {
+			int x = rand() % (2 * coveLength) - coveLength;
+			int z = rand() % (2 * coverWidth) - coverWidth;
+			float scale = rand() % 20 / (float)40 + 1.0;
+			tree3X.push_back(x);
+			tree3Z.push_back(z);
+			tree3Scale.push_back(scale);
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
+			/*
 			tree3X.push_back(rand() % (2 * coveLength) - coveLength);
 			tree3Z.push_back(rand() % (2 * coverWidth) - coverWidth);
 			tree3Scale.push_back(rand() % 20 / (float)40 + 1.0);
+			*/
 		}
 		for (int i = 0; i < numOfGrass; i++) {
 			grassX.push_back(rand() % (2 * coveLength) - coveLength);
 			grassZ.push_back(rand() % (2 * coverWidth) - coverWidth);
 		}
 		for (int i = 0; i < numOfStone; i++) {
-			stoneX.push_back(rand() % (2 * coveLength) - coveLength);
-			stoneZ.push_back(rand() % (2 * coverWidth) - coverWidth);
+			int x = rand() % (2 * coveLength) - coveLength;
+			int z = rand() % (2 * coverWidth) - coverWidth;
+			float scale = rand() % 20 / (float)40 + 1.0;
+			stoneX.push_back(x);
+			stoneZ.push_back(z);
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 3.0f, z - 2.0f), glm::vec3(x + 2.0f, 3.0f, z + 2.0f));
+			//stoneX.push_back(rand() % (2 * coveLength) - coveLength);
+			//stoneZ.push_back(rand() % (2 * coverWidth) - coverWidth);
 		}
 	}
 	// 深度贴图
