@@ -169,48 +169,48 @@ private:
 
 		if (segmentIntersect(d1, d2, d4, d6)) {
 			if (targetPos.z < cameraPos.z) {
-				printf("1\n");
+				//printf("1\n");
 				targetPos.z = obj2.y;
 				cameraPos.z += targetPos.z - tarZ;
 			}
 			else if(targetPos.z > cameraPos.z) {
-				printf("2\n");
+				//printf("2\n");
 				cameraPos.z = obj2.y;
 				targetPos.z += cameraPos.z - camZ;
 			}
 		}
 		else if (segmentIntersect(d1, d2, d5, d6)) {
 			if (targetPos.x < cameraPos.x) {
-				printf("3\n");
+				//printf("3\n");
 				targetPos.x = obj2.x;
 				cameraPos.x += targetPos.x - tarX;
 			}
 			else if (targetPos.x > cameraPos.x) {
-				printf("4\n");
+				//printf("4\n");
 				cameraPos.x = obj2.x;
 				targetPos.x += cameraPos.x - camX;
 			}
 		}
 		else if (segmentIntersect(d1, d2, d3, d5)) {
 			if (targetPos.z > cameraPos.z) {
-				printf("5\n");
+				//printf("5\n");
 				targetPos.z = obj1.y;
 				cameraPos.z += targetPos.z - tarZ;
 			}
 			else if (targetPos.z < cameraPos.z) {
-				printf("6\n");
+				//printf("6\n");
 				cameraPos.z = obj1.y;
 				targetPos.z += cameraPos.z - camZ;
 			}
 		}
 		else if (segmentIntersect(d1, d2, d3, d4)) {
 			if (targetPos.x > cameraPos.x) {
-				printf("7\n");
+				//printf("7\n");
 				targetPos.x = obj1.x;
 				cameraPos.x += targetPos.x - tarX;
 			}
 			else if (targetPos.x < cameraPos.x) {
-				printf("8\n");
+				//printf("8\n");
 				cameraPos.x = obj1.x;
 				targetPos.x += cameraPos.x - camX;
 			}
