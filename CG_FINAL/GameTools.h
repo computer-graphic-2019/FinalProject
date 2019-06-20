@@ -32,10 +32,10 @@ extern std::deque<std::string> recoverList;
 int numOfTree = 1;
 int numOfTree3 = 1;
 int numOfGrass = 150;
-int numOfStone = 150;
+int numOfStone = 1;
 
-int coverWidth = 100;
-int coveLength = 100;
+int coverWidth = 50;
+int coveLength = 50;
 
 class GameTools {
 private:
@@ -62,7 +62,7 @@ public:
 		ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs", "./ShaderCode/4.explode_shading.gs");
 
 		// 加载模型
-		ResM.loadModel("place", "./models/place/scene.obj");
+		ResM.loadModel("place", "./models/place/scene1.obj");
 		ResM.loadModel("target", "./models/target/target.obj");
 		ResM.loadModel("explodeTarget", "./models/explodeTarget/explodeTarget.obj");
 		ResM.loadModel("tree", "./models/scene/tree.obj");
@@ -96,7 +96,7 @@ public:
 			treeX.push_back(x);
 			treeZ.push_back(z);
 			treeScale.push_back(scale);
-			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
+			//physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
 		}
 		for (int i = 0; i < numOfTree3; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
@@ -105,26 +105,28 @@ public:
 			tree3X.push_back(x);
 			tree3Z.push_back(z);
 			tree3Scale.push_back(scale);
-			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
-			/*
-			tree3X.push_back(rand() % (2 * coveLength) - coveLength);
-			tree3Z.push_back(rand() % (2 * coverWidth) - coverWidth);
-			tree3Scale.push_back(rand() % 20 / (float)40 + 1.0);
-			*/
+			//physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 5.0f, z - 2.0f), glm::vec3(x + 2.0f, 5.0f, z + 2.0f));
 		}
 		for (int i = 0; i < numOfGrass; i++) {
 			grassX.push_back(rand() % (2 * coveLength) - coveLength);
 			grassZ.push_back(rand() % (2 * coverWidth) - coverWidth);
 		}
+		
 		for (int i = 0; i < numOfStone; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
 			float scale = rand() % 20 / (float)40 + 1.0;
 			stoneX.push_back(x);
 			stoneZ.push_back(z);
-			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 3.0f, z - 2.0f), glm::vec3(x + 2.0f, 3.0f, z + 2.0f));
-			//stoneX.push_back(rand() % (2 * coveLength) - coveLength);
-			//stoneZ.push_back(rand() % (2 * coverWidth) - coverWidth);
+			//physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 3.0f, z - 2.0f), glm::vec3(x + 2.0f, 3.0f, z + 2.0f));
+		}
+
+		// 阶梯
+		int x = -40, z = -18, y = 1;
+		for (int i = 0; i < 9; i++) {
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 8.0f, y - 1.0f, z - 1.0f), glm::vec3(x + 8.0f, y + 1.0f, z + 1.0f));
+			z += 2;
+			y += 2;
 		}
 	}
 	// 深度贴图
@@ -133,7 +135,7 @@ public:
 		Shader* shader = ResM.getShader("depthShader");
 		shader->use();
 		glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-		glm::mat4 lightProjection = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.0f, 200.0f);
+		glm::mat4 lightProjection = glm::ortho(-120.0f, 120.0f, -120.0f, 120.0f, 0.0f, 300.0f);
 		lightSpaceMatrix = lightProjection * lightView;
 		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 		// clear

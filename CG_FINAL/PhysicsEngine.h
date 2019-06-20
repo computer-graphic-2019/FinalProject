@@ -132,7 +132,6 @@ private:
 		if (!(cameraPos.y <= obj1.y || cameraPos.y - HeroHeight >= obj2.y)) {
 			glm::vec2 obj1XZ(obj1.x, obj1.z), obj2XZ(obj2.x, obj2.z);
 			inCollisionTestXZ(obj1XZ, obj2XZ, cameraPos, targetPos);
-			//std::cout << "Crash" << std::endl;
 		}
 	}
 
@@ -220,7 +219,7 @@ private:
 	//空间外部边缘碰撞检测
 	void outCollisionTestXZ(glm::vec2 obj1, glm::vec2 obj2, glm::vec3& cameraPos, glm::vec3& targetPos) {
 		
-		const float collisionThres = 0.55;
+		const float collisionThres = 0.20f;
 
 		//先设置包围盒：比空间外部边缘小一点
 		obj1.x += obj1.x < 0 ? 2 : -2;
