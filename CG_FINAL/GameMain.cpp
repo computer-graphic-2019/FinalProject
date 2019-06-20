@@ -89,7 +89,7 @@ int main()
 	// skybox module
 	SkyBox skybox;
 	// render director
-	GameTools director(glm::vec3(1.0f), 0.2, 0.5, 0.3);
+	GameTools director(glm::vec3(1.0f), 0.3, 1.0, 0.3);
 
 
     // build and compile shaders

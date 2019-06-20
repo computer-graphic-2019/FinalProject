@@ -96,7 +96,7 @@ public:
 			treeX.push_back(x);
 			treeZ.push_back(z);
 			treeScale.push_back(scale);
-			//physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
 		}
 		for (int i = 0; i < numOfTree3; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
@@ -105,11 +105,14 @@ public:
 			tree3X.push_back(x);
 			tree3Z.push_back(z);
 			tree3Scale.push_back(scale);
-			//physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 5.0f, z - 2.0f), glm::vec3(x + 2.0f, 5.0f, z + 2.0f));
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 5.0f, z - 2.0f), glm::vec3(x + 2.0f, 5.0f, z + 2.0f));
 		}
 		for (int i = 0; i < numOfGrass; i++) {
-			grassX.push_back(rand() % (2 * coveLength) - coveLength);
-			grassZ.push_back(rand() % (2 * coverWidth) - coverWidth);
+			int x = rand() % (2 * coveLength) - coveLength;
+			int z = rand() % (2 * coverWidth) - coverWidth;
+			grassX.push_back(x);
+			grassZ.push_back(z);
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
 		}
 		
 		for (int i = 0; i < numOfStone; i++) {

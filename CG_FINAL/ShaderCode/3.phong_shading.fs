@@ -68,7 +68,7 @@ void main()
    //specular
    vec3 viewDir = normalize(viewPos - in_fs.FragPos);
    vec3 halfwayDir = normalize(lightDir + viewDir);
-   float spec = pow(max(dot(viewDir, halfwayDir), 0.0f), 64.0f);
+   float spec = pow(max(dot(normal, halfwayDir), 0.0f), 64.0f);
    vec3 specular = spec * light.specular;
    // add shadow 
    float shadow = ShadowCalculation(in_fs.FragPosLightSpace);
