@@ -132,6 +132,7 @@ private:
 		if (!(cameraPos.y <= obj1.y || cameraPos.y - HeroHeight >= obj2.y)) {
 			glm::vec2 obj1XZ(obj1.x, obj1.z), obj2XZ(obj2.x, obj2.z);
 			inCollisionTestXZ(obj1XZ, obj2XZ, cameraPos, targetPos);
+			//std::cout << "Crash" << std::endl;
 		}
 	}
 
@@ -247,7 +248,7 @@ private:
 		// 计算摄像机与目标的距离
 		float distance = sqrt(pow((cameraPos.x - targetPos.x),2) + pow((cameraPos.z - targetPos.z),2));
 
-		std::cout << "distance: " << distance << std::endl;
+		//std::cout << "distance: " << distance << std::endl;
 
 		//若视点与目标距离太小，则固定目标位置，视点沿正对目标的逆方向移动
 		if (distance <= collisionThres) {
