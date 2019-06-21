@@ -18,8 +18,8 @@ const float GravityAcceler = -9.8f;
 
 const float BoundaryGap = 1.0f;          //碰撞间距
 const float JumpInitialSpeed = 12.0f;    //起跳初速度
-const float JumpFactor = 0.1f;          //跳起速度系数
-const float GravityFactor = 0.1f;       //下落速度系数
+const float JumpFactor = 0.05f;          //跳起速度系数
+const float GravityFactor = 0.05f;       //下落速度系数
 
 class PhysicsEngine {
 public:
