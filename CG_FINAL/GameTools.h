@@ -70,7 +70,7 @@ public:
 
 		// 加载模型
 		ResM.loadModel("place", "./models/place/scene2.obj");
-		ResM.loadModel("target", "./models/target/target.obj");
+		ResM.loadModel("target", "./models/target/target1.obj");
 		ResM.loadModel("explodeTarget", "./models/explodeTarget/explodeTarget.obj");
 		ResM.loadModel("tree", "./models/scene/tree.obj");
 		ResM.loadModel("tree3", "./models/scene/tree3.obj");
@@ -145,14 +145,18 @@ public:
 		for (int i = 0; i < numOfTarget; i++) {
 			std::string name = "target";
 			name += ('0' + i);
-			GameObject go(glm::vec3(48.0f, 6.0f, -60.0f + 8 * (i + 1)), glm::vec3(2.0f, 2.0f, 2.0f));
+			glm::vec3 pos(48.0f, 6.0f, -60.0f + 8 * (i + 1));
+			glm::vec3 size(0.3f, 2.2f, 2.2f);
+			GameObject go(pos - size, size * 2.0f);
 			targetList.insert_or_assign(name, go);
 		}
 
 		for (int i = 0; i < numOfExplodeTarget; i++) {
 			std::string name = "target";
 			name += ('0' + i);
-			GameObject go(glm::vec3(48.0f, 26.0f, -20.0f + 8 * (i + 1)), glm::vec3(2.0f, 2.0f, 2.0f));
+			glm::vec3 pos(48.0f, 26.0f, -20.0f + 8 * (i + 1));
+			glm::vec3 size(1.0f, 1.0f, 1.0f);
+			GameObject go(pos - size, size * 2.0f);
 			explodeTargeList.insert_or_assign(name, go);
 		}
 
@@ -379,9 +383,8 @@ public:
 		// 固定靶子
 		for (std::map<std::string, GameObject>::iterator ptr = targetList.begin(); ptr != targetList.end(); ptr++) {
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, ptr->second.Position);
-			//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-			model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			model = glm::translate(model, ptr->second.Position + ptr->second.Size * 0.5f);
+			//model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			shader->setMat4("model", model);
 			ResM.getModel("target")->Draw((*shader));
 		}
@@ -390,9 +393,8 @@ public:
 		std::map<std::string, GameObject>::iterator posPtr = explodeTargeList.begin();
 		for (std::map<std::string, bool>::iterator ptr = explodeTargeRec.begin(); posPtr != explodeTargeList.end() && ptr != explodeTargeRec.end(); ptr++, posPtr++) {
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, posPtr->second.Position);
-			//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-			model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			model = glm::translate(model, posPtr->second.Position + posPtr->second.Size * 0.5f);
+			//model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			shader->setMat4("model", model);
 			if (ptr->second) {
 				shader->setBool("isExplode", true);
