@@ -146,7 +146,7 @@ public:
 			std::string name = "target";
 			name += ('0' + i);
 			glm::vec3 pos(48.0f, 6.0f, -60.0f + 8 * (i + 1));
-			glm::vec3 size(0.3f, 2.2f, 2.2f);
+			glm::vec3 size(1.0f, 2.2f, 2.2f);
 			GameObject go(pos - size, size * 2.0f);
 			targetList.insert_or_assign(name, go);
 		}
@@ -158,6 +158,7 @@ public:
 			glm::vec3 size(1.0f, 1.0f, 1.0f);
 			GameObject go(pos - size, size * 2.0f);
 			explodeTargeList.insert_or_assign(name, go);
+			explodeTargeRec.insert_or_assign(name, false);
 		}
 
 		for (int i = 0; i < numOfMovingTarget; i++) {

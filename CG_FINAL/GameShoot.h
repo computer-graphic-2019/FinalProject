@@ -25,7 +25,7 @@ typedef struct bulletInfo {
 	bulletInfo(GameObject g, glm::vec3 dir, bool i){
 		direction = dir;
 		go = g;
-		isHit = false;
+		isHit = i;
 	}
 };
 
