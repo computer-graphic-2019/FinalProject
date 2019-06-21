@@ -30,8 +30,8 @@ extern std::map<std::string, bool> explodeTargeRec;
 extern std::deque<std::string> recoverList;
 
 int numOfTree = 1;
-int numOfTree3 = 1;
-int numOfGrass = 150;
+int numOfTree3 = 10;
+int numOfGrass = 1000;
 int numOfStone = 1;
 
 int coverWidth = 50;
@@ -44,11 +44,12 @@ private:
 	GLuint SHADOW_WIDTH, SHADOW_HEIGHT;
 	glm::mat4 lightSpaceMatrix;
 	glm::vec3 ambient_light, diffuse_light, specular_light;
-	// random trees
-	std::vector<float> treeScale, treeX, treeZ;
-	std::vector<float> tree3Scale, tree3X, tree3Z;
-	std::vector<float> grassX, grassZ;
-	std::vector<float> stoneX, stoneZ;
+	// model matrices
+	std::vector<glm::mat4> treeModelMatrices;
+	std::vector<glm::mat4> tree3ModelMatrices;
+	std::vector<glm::mat4> grassModelMatrices;
+	std::vector<glm::mat4> stoneModelMatrices;
+
 public:
 	GameTools(glm::vec3 light, float ambient, float diffuse, float specular) {
 		// 初始化光照参数
@@ -60,6 +61,8 @@ public:
 		ResM.loadShader("debug", "./ShaderCode/debug.vs", "./ShaderCode/debug.fs");
 		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs");
 		ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs", "./ShaderCode/4.explode_shading.gs");
+		ResM.loadShader("instancingModel", "./ShaderCode/instancing_phong_shading.vs", "./ShaderCode/instancing_phong_shading.fs");
+		ResM.loadShader("instancingDepthShader", "./ShaderCode/instancing_depth_mapping.vs", "./ShaderCode/instancing_depth_mapping.fs");
 
 		// 加载模型
 		ResM.loadModel("place", "./models/place/scene2.obj");
@@ -88,30 +91,35 @@ public:
 		glReadBuffer(GL_NONE);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);	
 
+		srand(glfwGetTime()); // initialize random seed	
 		// 随机位置参数
 		for (int i = 0; i < numOfTree; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
 			float scale = rand() % 20 / (float)40 + 1.0;
-			treeX.push_back(x);
-			treeZ.push_back(z);
-			treeScale.push_back(scale);
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(x, 0.0f, z));
+			model = glm::scale(model, glm::vec3(scale, scale, scale));
+			treeModelMatrices.push_back(model);
 			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
 		}
 		for (int i = 0; i < numOfTree3; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
 			float scale = rand() % 20 / (float)40 + 1.0;
-			tree3X.push_back(x);
-			tree3Z.push_back(z);
-			tree3Scale.push_back(scale);
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(x, 0.0f, z));
+			model = glm::scale(model, glm::vec3(scale, scale, scale));
+			tree3ModelMatrices.push_back(model);
 			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 5.0f, z - 2.0f), glm::vec3(x + 2.0f, 5.0f, z + 2.0f));
 		}
 		for (int i = 0; i < numOfGrass; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
-			grassX.push_back(x);
-			grassZ.push_back(z);
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(x, 0.0f, z));
+			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
+			grassModelMatrices.push_back(model);
 			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
 		}
 		
@@ -119,8 +127,10 @@ public:
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
 			float scale = rand() % 20 / (float)40 + 1.0;
-			stoneX.push_back(x);
-			stoneZ.push_back(z);
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(x, 0.0f, z));
+			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
+			stoneModelMatrices.push_back(model);
 		}
 
 		// set boundary
@@ -147,7 +157,112 @@ public:
 		glm::vec3 platform(16.0f, 10.0f, 0.0f);
 		physicsEngine.setSceneInnerBoundary(glm::vec3(platform.x - 44.0f, platform.y - 10.0f, platform.z - 18.0f), 
 			glm::vec3(platform.x + 44.0f, platform.y + 10.0f, platform.z + 18.0f));
+
+		ConfigureInstancedArray();
 	}
+
+	void ConfigureInstancedArray() {
+		unsigned int treeBuffer;
+		glGenBuffers(1, &treeBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, treeBuffer);
+		glBufferData(GL_ARRAY_BUFFER, numOfTree * sizeof(glm::mat4), &treeModelMatrices[0], GL_STATIC_DRAW);
+		for (unsigned int i = 0; i < ResM.getModel("tree")->meshes.size(); i++) {
+			unsigned int VAO = ResM.getModel("tree")->meshes[i].VAO;
+			glBindVertexArray(VAO);
+			// set attribute pointers for matrix (4 times vec4)
+			glEnableVertexAttribArray(3);
+			glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+			glEnableVertexAttribArray(5);
+			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+			glEnableVertexAttribArray(6);
+			glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+			glVertexAttribDivisor(3, 1);
+			glVertexAttribDivisor(4, 1);
+			glVertexAttribDivisor(5, 1);
+			glVertexAttribDivisor(6, 1);
+
+			glBindVertexArray(0);
+		}
+
+		unsigned int tree3Buffer;
+		glGenBuffers(1, &tree3Buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, tree3Buffer);
+		glBufferData(GL_ARRAY_BUFFER, numOfTree3 * sizeof(glm::mat4), &tree3ModelMatrices[0], GL_STATIC_DRAW);
+		for (unsigned int i = 0; i < ResM.getModel("tree3")->meshes.size(); i++) {
+			unsigned int VAO = ResM.getModel("tree3")->meshes[i].VAO;
+			glBindVertexArray(VAO);
+			// set attribute pointers for matrix (4 times vec4)
+			glEnableVertexAttribArray(3);
+			glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+			glEnableVertexAttribArray(5);
+			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+			glEnableVertexAttribArray(6);
+			glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+			glVertexAttribDivisor(3, 1);
+			glVertexAttribDivisor(4, 1);
+			glVertexAttribDivisor(5, 1);
+			glVertexAttribDivisor(6, 1);
+
+			glBindVertexArray(0);
+		}
+
+		unsigned int grassBuffer;
+		glGenBuffers(1, &grassBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, grassBuffer);
+		glBufferData(GL_ARRAY_BUFFER, numOfGrass * sizeof(glm::mat4), &grassModelMatrices[0], GL_STATIC_DRAW);
+		for (unsigned int i = 0; i < ResM.getModel("grass")->meshes.size(); i++) {
+			unsigned int VAO = ResM.getModel("grass")->meshes[i].VAO;
+			glBindVertexArray(VAO);
+			// set attribute pointers for matrix (4 times vec4)
+			glEnableVertexAttribArray(3);
+			glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+			glEnableVertexAttribArray(5);
+			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+			glEnableVertexAttribArray(6);
+			glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+			glVertexAttribDivisor(3, 1);
+			glVertexAttribDivisor(4, 1);
+			glVertexAttribDivisor(5, 1);
+			glVertexAttribDivisor(6, 1);
+
+			glBindVertexArray(0);
+		}
+
+		unsigned int stoneBuffer;
+		glGenBuffers(1, &stoneBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, stoneBuffer);
+		glBufferData(GL_ARRAY_BUFFER, numOfStone * sizeof(glm::mat4), &stoneModelMatrices[0], GL_STATIC_DRAW);
+		for (unsigned int i = 0; i < ResM.getModel("stone")->meshes.size(); i++) {
+			unsigned int VAO = ResM.getModel("stone")->meshes[i].VAO;
+			glBindVertexArray(VAO);
+			// set attribute pointers for matrix (4 times vec4)
+			glEnableVertexAttribArray(3);
+			glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+			glEnableVertexAttribArray(5);
+			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+			glEnableVertexAttribArray(6);
+			glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+			glVertexAttribDivisor(3, 1);
+			glVertexAttribDivisor(4, 1);
+			glVertexAttribDivisor(5, 1);
+			glVertexAttribDivisor(6, 1);
+
+			glBindVertexArray(0);
+		}
+	}
+
 	// 深度贴图
 	void RenderDepthMap(glm::vec3 lightPos) {
 		// bind data
@@ -163,6 +278,12 @@ public:
 		glClear(GL_DEPTH_BUFFER_BIT);
 		// render
 		RenderObject(shader);
+
+		// 实例化数组阴影
+		shader = ResM.getShader("instancingDepthShader");
+		shader->use();
+		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+		RenderInstances(shader);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
@@ -194,6 +315,27 @@ public:
 		glActiveTexture(GL_TEXTURE31);
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		RenderObject(shader);
+
+		// 实例化数组渲染
+		shader = ResM.getShader("instancingModel");
+		shader->use();
+		shader->setInt("shadowMap", 31);
+		shader->setMat4("view", view);
+		shader->setMat4("projection", projection);
+		shader->setVec3("viewPos", viewPos);
+		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+		shader->setVec3("light.ambient", ambient_light);
+		shader->setVec3("light.diffuse", diffuse_light);
+		shader->setVec3("light.specular", specular_light);
+		shader->setVec3("light.position", lightPos);
+
+		shader->setBool("isExplode", false);
+
+		// render
+		glActiveTexture(GL_TEXTURE31);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		RenderInstances(shader);
 	}
 
 	// 渲染所有物体
@@ -213,44 +355,6 @@ public:
 		shader->setMat4("model", model);
 		ResM.getModel("target")->Draw(*shader);
 
-		// 两种树
-		for (int i = 0; i < numOfTree; i++) {
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(treeX[i], 0.0f, treeZ[i]));
-			model = glm::scale(model, glm::vec3(treeScale[i], treeScale[i], treeScale[i]));
-			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			shader->setMat4("model", model);
-			ResM.getModel("tree")->Draw(*shader);
-		}
-		for (int i = 0; i < numOfTree3; i++) {
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(tree3X[i], 0.0f, tree3Z[i]));
-			model = glm::scale(model, glm::vec3(tree3Scale[i], tree3Scale[i], tree3Scale[i]));
-			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			shader->setMat4("model", model);
-			ResM.getModel("tree3")->Draw(*shader);
-		}
-
-		// 草
-		for (int i = 0; i < numOfGrass; i++) {
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(grassX[i], 0.0f, grassZ[i]));
-			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
-			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			shader->setMat4("model", model);
-			ResM.getModel("grass")->Draw(*shader);
-		}
-
-		// 石头
-		for (int i = 0; i < numOfStone; i++) {
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(stoneX[i], 0.0f, stoneZ[i]));
-			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
-			//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			shader->setMat4("model", model);
-			ResM.getModel("stone")->Draw(*shader);
-		}
-
 		// 爆炸靶子
 		for (std::map<std::string, bool>::iterator ptr = explodeTargeRec.begin(); ptr != explodeTargeRec.end(); ptr++) {
 			glm::mat4 model = glm::mat4(1.0f);
@@ -264,6 +368,42 @@ public:
 			else {
 				ResM.getModel("explodeTarget")->Draw((*shader));
 			}
+		}
+	}
+
+	// 渲染实例
+	void RenderInstances(Shader* shader) {
+		shader->setInt("texture_diffuse1", 0);
+		glActiveTexture(GL_TEXTURE0);
+
+		// 两种树
+		glBindTexture(GL_TEXTURE_2D, ResM.getModel("tree")->textures_loaded[0].id);
+		for (unsigned int i = 0; i < ResM.getModel("tree")->meshes.size(); i++) {
+			glBindVertexArray(ResM.getModel("tree")->meshes[i].VAO);
+			glDrawElementsInstanced(GL_TRIANGLES, ResM.getModel("tree")->meshes[i].indices.size(), GL_UNSIGNED_INT, 0, numOfTree);
+			glBindVertexArray(0);
+		}
+		glBindTexture(GL_TEXTURE_2D, ResM.getModel("tree3")->textures_loaded[0].id);
+		for (unsigned int i = 0; i < ResM.getModel("tree3")->meshes.size(); i++) {
+			glBindVertexArray(ResM.getModel("tree3")->meshes[i].VAO);
+			glDrawElementsInstanced(GL_TRIANGLES, ResM.getModel("tree3")->meshes[i].indices.size(), GL_UNSIGNED_INT, 0, numOfTree3);
+			glBindVertexArray(0);
+		}
+
+		// 草
+		glBindTexture(GL_TEXTURE_2D, ResM.getModel("grass")->textures_loaded[0].id);
+		for (unsigned int i = 0; i < ResM.getModel("grass")->meshes.size(); i++) {
+			glBindVertexArray(ResM.getModel("grass")->meshes[i].VAO);
+			glDrawElementsInstanced(GL_TRIANGLES, ResM.getModel("grass")->meshes[i].indices.size(), GL_UNSIGNED_INT, 0, numOfGrass);
+			glBindVertexArray(0);
+		}
+
+		// 石头
+		glBindTexture(GL_TEXTURE_2D, ResM.getModel("stone")->textures_loaded[0].id);
+		for (unsigned int i = 0; i < ResM.getModel("stone")->meshes.size(); i++) {
+			glBindVertexArray(ResM.getModel("stone")->meshes[i].VAO);
+			glDrawElementsInstanced(GL_TRIANGLES, ResM.getModel("stone")->meshes[i].indices.size(), GL_UNSIGNED_INT, 0, numOfStone);
+			glBindVertexArray(0);
 		}
 	}
 
@@ -309,7 +449,6 @@ public:
 		glDeleteVertexArrays(1, &quadVAO);
 		glDeleteBuffers(1, &quadVBO);
 	}
-	
 };
 
 #endif
