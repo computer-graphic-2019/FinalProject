@@ -93,20 +93,6 @@ int main()
 	// render director
 	GameTools director(glm::vec3(1.0f), 0.3, 0.8, 0.3);
 
-
-    // build and compile shaders
-    // -------------------------
-	ResM.loadShader("textShader", "./ShaderCode/5.text_loading.vs", "./ShaderCode/5.text_loading.fs");
-    // load models
-	ResM.loadModel("gun", "./models/gun/m24.obj");
-	ResM.loadModel("gunOnFire", "./models/gun/m24OnFire.obj");
-	ResM.loadModel("bullet", "./models/bullet/bullet.obj");
-
-	// target position
-	targetList.insert(std::pair<std::string, GameObject>("target", GameObject(glm::vec3(-0.3f, 0.1f, -20.0f), glm::vec3(0.8f,1.0f,2.0f))));
-	explodeTargeList.insert(std::pair<std::string, GameObject>("explodeTarget1", GameObject(glm::vec3(1.2f, 0.2f, -20.0f), glm::vec3(0.4f, 0.7f, 1.0f))));
-	explodeTargeRec.insert(std::pair<std::string, bool>("explodeTarget1", false));
-
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	shootController.initialTextShader();

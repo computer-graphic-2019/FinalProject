@@ -41,13 +41,13 @@ void main() {
     vs_out.Normal = gs_in[0].Normal;
 	vs_out.FragPosLightSpace = gs_in[0].FragPosLightSpace;
     EmitVertex();
-    gl_Position = isExplode? explode(gl_in[0].gl_Position, normal) : gl_in[1].gl_Position;
+    gl_Position = isExplode? explode(gl_in[1].gl_Position, normal) : gl_in[1].gl_Position;
     vs_out.TexCoords = gs_in[1].TexCoords;
     vs_out.FragPos = gs_in[1].FragPos;
     vs_out.Normal = gs_in[1].Normal;
 	vs_out.FragPosLightSpace = gs_in[1].FragPosLightSpace;
     EmitVertex();
-    gl_Position = isExplode? explode(gl_in[0].gl_Position, normal) : gl_in[2].gl_Position;
+    gl_Position = isExplode? explode(gl_in[2].gl_Position, normal) : gl_in[2].gl_Position;
     vs_out.TexCoords = gs_in[2].TexCoords;
     vs_out.FragPos = gs_in[2].FragPos;
     vs_out.Normal = gs_in[2].Normal;

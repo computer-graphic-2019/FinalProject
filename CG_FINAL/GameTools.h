@@ -33,6 +33,9 @@ int numOfTree = 1;
 int numOfTree3 = 10;
 int numOfGrass = 1000;
 int numOfStone = 1;
+int numOfTarget = 4;
+int numOfMovingTarget = 4;
+int numOfExplodeTarget = 4;
 
 int coverWidth = 50;
 int coveLength = 50;
@@ -63,6 +66,7 @@ public:
 		ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs", "./ShaderCode/4.explode_shading.gs");
 		ResM.loadShader("instancingModel", "./ShaderCode/instancing_phong_shading.vs", "./ShaderCode/instancing_phong_shading.fs");
 		ResM.loadShader("instancingDepthShader", "./ShaderCode/instancing_depth_mapping.vs", "./ShaderCode/instancing_depth_mapping.fs");
+		ResM.loadShader("textShader", "./ShaderCode/5.text_loading.vs", "./ShaderCode/5.text_loading.fs");
 
 		// 加载模型
 		ResM.loadModel("place", "./models/place/scene2.obj");
@@ -72,6 +76,10 @@ public:
 		ResM.loadModel("tree3", "./models/scene/tree3.obj");
 		ResM.loadModel("grass", "./models/scene/grass.obj");
 		ResM.loadModel("stone", "./models/scene/stone.obj");
+
+		ResM.loadModel("gun", "./models/gun/m24.obj");
+		ResM.loadModel("gunOnFire", "./models/gun/m24OnFire.obj");
+		ResM.loadModel("bullet", "./models/bullet/bullet.obj");
 
 		// 初始化阴影贴图
 		SHADOW_WIDTH = 4096;
@@ -131,6 +139,25 @@ public:
 			model = glm::translate(model, glm::vec3(x, 0.0f, z));
 			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
 			stoneModelMatrices.push_back(model);
+		}
+
+		// 设置靶子位置
+		for (int i = 0; i < numOfTarget; i++) {
+			std::string name = "target";
+			name += ('0' + i);
+			GameObject go(glm::vec3(48.0f, 6.0f, -60.0f + 8 * (i + 1)), glm::vec3(2.0f, 2.0f, 2.0f));
+			targetList.insert_or_assign(name, go);
+		}
+
+		for (int i = 0; i < numOfExplodeTarget; i++) {
+			std::string name = "target";
+			name += ('0' + i);
+			GameObject go(glm::vec3(48.0f, 26.0f, -20.0f + 8 * (i + 1)), glm::vec3(2.0f, 2.0f, 2.0f));
+			explodeTargeList.insert_or_assign(name, go);
+		}
+
+		for (int i = 0; i < numOfMovingTarget; i++) {
+			break;
 		}
 
 		// set boundary
@@ -294,7 +321,9 @@ public:
 		shader->use();
 		glm::vec3 viewPos = moveController.getHumanCamera()->getPosition();
 		glm::mat4 view = moveController.getHumanCamera()->getView();
-		glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), 
+												(float)SCR_WIDTH / (float)SCR_HEIGHT, 
+												0.1f, 3000.0f);
 		shader->setInt("shadowMap", 31);
 		shader->setMat4("view", view);
 		shader->setMat4("projection", projection);
@@ -340,35 +369,41 @@ public:
 
 	// 渲染所有物体
 	void RenderObject(Shader* shader) {
-		glm::mat4 model;
+		glm::mat4 model = glm::mat4(1.0f);
 
 		// 地板
 		model = glm::mat4(1.0f);
 		shader->setMat4("model", model);
 		ResM.getModel("place")->Draw(*shader);
 
-		// 靶子
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 5.0f, -10.0f));
-		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-		shader->setMat4("model", model);
-		ResM.getModel("target")->Draw(*shader);
+		// 固定靶子
+		for (std::map<std::string, GameObject>::iterator ptr = targetList.begin(); ptr != targetList.end(); ptr++) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, ptr->second.Position);
+			//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+			model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			shader->setMat4("model", model);
+			ResM.getModel("target")->Draw((*shader));
+		}
 
 		// 爆炸靶子
-		for (std::map<std::string, bool>::iterator ptr = explodeTargeRec.begin(); ptr != explodeTargeRec.end(); ptr++) {
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(0.0f, 5.0f, -10.0f));
-			model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+		std::map<std::string, GameObject>::iterator posPtr = explodeTargeList.begin();
+		for (std::map<std::string, bool>::iterator ptr = explodeTargeRec.begin(); posPtr != explodeTargeList.end() && ptr != explodeTargeRec.end(); ptr++, posPtr++) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, posPtr->second.Position);
+			//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+			model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			shader->setMat4("model", model);
 			if (ptr->second) {
 				shader->setBool("isExplode", true);
 				ResM.getModel("explodeTarget")->Draw((*shader));
 			}
 			else {
+				shader->setBool("isExplode", false);
 				ResM.getModel("explodeTarget")->Draw((*shader));
 			}
 		}
+		shader->setBool("isExplode", false);
 	}
 
 	// 渲染实例
@@ -383,6 +418,7 @@ public:
 			glDrawElementsInstanced(GL_TRIANGLES, ResM.getModel("tree")->meshes[i].indices.size(), GL_UNSIGNED_INT, 0, numOfTree);
 			glBindVertexArray(0);
 		}
+
 		glBindTexture(GL_TEXTURE_2D, ResM.getModel("tree3")->textures_loaded[0].id);
 		for (unsigned int i = 0; i < ResM.getModel("tree3")->meshes.size(); i++) {
 			glBindVertexArray(ResM.getModel("tree3")->meshes[i].VAO);
