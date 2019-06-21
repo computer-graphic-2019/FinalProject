@@ -8,6 +8,7 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 #include <iostream>
+#include <vector>
 #include <deque>
 #include <ft2build.h>
 #include FT_FREETYPE_H  
@@ -17,17 +18,27 @@
 #include "GameObject.h"
 #include "GameMove.h"
 
+typedef struct bulletInfo {
+	GameObject go;
+	glm::vec3 direction;
+	bool isHit;
+	bulletInfo(GameObject g, glm::vec3 dir, bool i){
+		direction = dir;
+		go = g;
+		isHit = false;
+	}
+};
+
 class GameShoot {
 private:
-	glm::vec3 bulletPos;
-	glm::vec3 direction;
-	GameObject bullet;
-	bool isHit;
+	std::vector<bulletInfo> bulletList;
 	int point;
 public:
 	GameShoot();
     // 控制开枪（鼠标左键）
     void Fire();
+	// 发射子弹（鼠标左键）
+	void Shoot();
 	// 子弹轨迹
 	void showBullet(float deltaTime);
     // 检查命中位置
