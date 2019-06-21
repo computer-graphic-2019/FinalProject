@@ -9,6 +9,6 @@ uniform samplerCube skybox;
 void main()
 {
 	float threshold = 0.25;
-	float fade = time > threshold ? time : threshold;
+	float fade = time > 0 ? time + threshold : threshold;
     color = fade * texture(skybox, TexCoords);
 }
