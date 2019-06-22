@@ -86,7 +86,7 @@ int main()
 	glEnable(GL_MULTISAMPLE);
 	// Face Culling
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_FRAMEBUFFER_SRGB);
+	//glEnable(GL_FRAMEBUFFER_SRGB);
 
 	// skybox module
 	SkyBox skybox;
@@ -131,7 +131,9 @@ int main()
 		// render skybox
 		skybox.renderSkyBox(time);
 		// render scene
+		glDisable(GL_CULL_FACE);
 		director.RenderDepthMap(lightPos);
+		glEnable(GL_CULL_FACE);
 		director.RenderScene(lightPos);
 		//director.testMap(window);
 		

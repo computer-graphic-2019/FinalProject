@@ -62,7 +62,7 @@ public:
 
 		// 加载着色器
 		ResM.loadShader("debug", "./ShaderCode/debug.vs", "./ShaderCode/debug.fs");
-		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs");
+		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs", "./ShaderCode/4.depth_explode_shading.gs");
 		ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs", "./ShaderCode/4.explode_shading.gs");
 		ResM.loadShader("instancingModel", "./ShaderCode/instancing_phong_shading.vs", "./ShaderCode/instancing_phong_shading.fs");
 		ResM.loadShader("instancingDepthShader", "./ShaderCode/instancing_depth_mapping.vs", "./ShaderCode/instancing_depth_mapping.fs");
@@ -304,10 +304,12 @@ public:
 		glm::mat4 lightProjection = glm::ortho(-120.0f, 120.0f, -120.0f, 120.0f, 0.0f, 300.0f);
 		lightSpaceMatrix = lightProjection * lightView;
 		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+		shader->setBool("isExplode", false);
 		// clear
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
+		glCullFace(GL_FRONT);
 		// render
 		RenderObject(shader);
 
@@ -315,7 +317,9 @@ public:
 		shader = ResM.getShader("instancingDepthShader");
 		shader->use();
 		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
 		RenderInstances(shader);
+		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 

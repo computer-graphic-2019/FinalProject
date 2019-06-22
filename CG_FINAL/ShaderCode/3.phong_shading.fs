@@ -57,8 +57,8 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 void main()
 {
    float gamma = 2.2;
-   //vec3 diffuse_color = pow(texture(texture_diffuse1, in_fs.TexCoords).rgb, vec3(gamma));
-   vec3 diffuse_color = texture(texture_diffuse1, in_fs.TexCoords).rgb;
+   vec3 diffuse_color = pow(texture(texture_diffuse1, in_fs.TexCoords).rgb, vec3(gamma));
+   //vec3 diffuse_color = texture(texture_diffuse1, in_fs.TexCoords).rgb;
    vec3 specular_color = texture(texture_specular1, in_fs.TexCoords).rgb;
    //ambient
    vec3 ambient = light.ambient;
@@ -72,9 +72,17 @@ void main()
    vec3 halfwayDir = normalize(lightDir + viewDir);
    float spec = pow(max(dot(normal, halfwayDir), 0.0f), 64.0f);
    vec3 specular = spec * light.specular;
+   // simple attenuation
+   float max_distance = 1.5;
+   float distance = length(light.position - in_fs.FragPos);
+   float attenuation = 1.0 / distance * distance;
+   
+   diffuse *= attenuation;
+   specular *= attenuation;
+   
    // add shadow 
    float shadow = ShadowCalculation(in_fs.FragPosLightSpace);
    vec3 result = ambient * diffuse_color + (1.0 - shadow) * (diffuse * diffuse_color + specular * specular_color);
+   result = pow(result, vec3(1.0/gamma));
    FragColor = vec4(result, 1.0f);
-   //FragColor.rgb = pow(FragColor.rgb, vec3(1.0/gamma));
 };
