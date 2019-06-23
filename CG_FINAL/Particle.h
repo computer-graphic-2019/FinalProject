@@ -83,6 +83,7 @@ public:
 		// Use additive blending to give it a 'glow' effect
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		this->shader->use();
+		glDisable(GL_CULL_FACE);
 		for (Particle particle : this->particles)
 		{
 			if (particle.Life > 0.0f)
@@ -99,6 +100,7 @@ public:
 				glBindVertexArray(0);
 			}
 		}
+		glEnable(GL_CULL_FACE);
 		// Don't forget to reset to default blending mode
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}

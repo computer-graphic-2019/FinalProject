@@ -133,7 +133,9 @@ int main()
 		// render skybox
 		skybox.renderSkyBox(time);
 		// render scene
+		glDisable(GL_CULL_FACE);
 		director.RenderDepthMap(lightPos);
+		glEnable(GL_CULL_FACE);
 		director.RenderScene(lightPos);
 		//director.testMap(window);
 		
