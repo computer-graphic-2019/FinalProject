@@ -91,7 +91,7 @@ int main()
 	// skybox module
 	SkyBox skybox;
 	// render director
-	GameTools director(glm::vec3(1.0f), 0.3, 0.8, 0.3);
+	GameTools director(glm::vec3(1.0f), 0.1, 0.8, 0.3);
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

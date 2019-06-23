@@ -29,15 +29,15 @@ extern std::map<std::string, GameObject> explodeTargeList;
 extern std::map<std::string, bool> explodeTargeRec;
 extern std::deque<std::string> recoverList;
 
-int numOfTree = 1;
-int numOfTree3 = 10;
-int numOfGrass = 1000;
-int numOfStone = 1;
+int numOfTree = 3;
+int numOfTree3 = 7;
+int numOfGrass = 200;
+int numOfStone = 100;
 int numOfTarget = 4;
 int numOfMovingTarget = 4;
 int numOfExplodeTarget = 4;
 
-int coverWidth = 50;
+int coverWidth = 30;
 int coveLength = 50;
 
 class GameTools {
@@ -67,6 +67,7 @@ public:
 		ResM.loadShader("instancingModel", "./ShaderCode/instancing_phong_shading.vs", "./ShaderCode/instancing_phong_shading.fs");
 		ResM.loadShader("instancingDepthShader", "./ShaderCode/instancing_depth_mapping.vs", "./ShaderCode/instancing_depth_mapping.fs");
 		ResM.loadShader("textShader", "./ShaderCode/5.text_loading.vs", "./ShaderCode/5.text_loading.fs");
+		ResM.loadShader("hdrShader", "./ShaderCode/hdr.vs", "./ShaderCode/hdr.fs");
 
 		// 加载模型
 		ResM.loadModel("place", "./models/place/scene2.obj");
@@ -99,41 +100,49 @@ public:
 		glReadBuffer(GL_NONE);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);	
 
-		srand(glfwGetTime()); // initialize random seed	
+		srand(1561273370); // initialize random seed	
 		// 随机位置参数
 		for (int i = 0; i < numOfTree; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
+			if (z > 0) z += 20;
+			else z -= 20;
 			float scale = rand() % 20 / (float)40 + 1.0;
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(x, 0.0f, z));
 			model = glm::scale(model, glm::vec3(scale, scale, scale));
 			treeModelMatrices.push_back(model);
-			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 4.0f, -10.0f, z - 4.0f), glm::vec3(x + 4.0f, 10.0f, z + 4.0f));
 		}
 		for (int i = 0; i < numOfTree3; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
+			if (z > 0) z += 20;
+			else z -= 20;
 			float scale = rand() % 20 / (float)40 + 1.0;
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(x, 0.0f, z));
 			model = glm::scale(model, glm::vec3(scale, scale, scale));
 			tree3ModelMatrices.push_back(model);
-			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 5.0f, z - 2.0f), glm::vec3(x + 2.0f, 5.0f, z + 2.0f));
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, -8.0f, z - 2.0f), glm::vec3(x + 2.0f, 8.0f, z + 2.0f));
 		}
 		for (int i = 0; i < numOfGrass; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
+			if (z > 0) z += 20;
+			else z -= 20;
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(x, 0.0f, z));
 			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
 			grassModelMatrices.push_back(model);
-			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
+			//physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
 		}
 		
 		for (int i = 0; i < numOfStone; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
+			if (z > 0) z += 20;
+			else z -= 20;
 			float scale = rand() % 20 / (float)40 + 1.0;
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(x, 0.0f, z));
