@@ -10,15 +10,14 @@
 #include "Shader.h"
 #include "Texture.h"
 
-float particleLife = 1.0;
+float particleLife = 2.0;
 float radius = 0.02;
 
 struct Particle {
 	glm::vec3 Position, Velocity;
 	glm::vec4 Color;
-	GLfloat Life;
-
-	Particle() : Position(0.0f), Velocity(0.0f), Color(1.0f), Life(0.0f) { }
+	GLfloat Life, angleX, angleY;
+	Particle() : Position(0.0f), Velocity(0.0f), Color(1.0f), Life(0.0f) , angleX(0), angleY(0) { }
 };
 
 class ParticleSystem
@@ -89,18 +88,22 @@ public:
 	// Render all particles
 	void Draw(glm::mat4 view, glm::mat4 projection)
 	{
-		// Use additive blending to give it a 'glow' effect
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		this->shader->use();
 		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		for (Particle particle : this->particles)
 		{
 			if (particle.Life > 0.0f)
 			{
+				glm::mat4 model(1.0f);
+				model = glm::translate(model, particle.Position);
+				model = glm::rotate(model, glm::radians(particle.angleX), glm::vec3(1.0f, 0.0f, 0.0f));
+				model = glm::rotate(model, glm::radians(particle.angleY), glm::vec3(0.0f, 1.0f, 0.0f));
 				this->shader->setInt("sprite", 30);
+				this->shader->setMat4("model", model);
 				this->shader->setMat4("view", view);
 				this->shader->setMat4("projection", projection);
-				this->shader->setVec3("offset", particle.Position);
 				this->shader->setVec4("color", particle.Color);
 				glActiveTexture(GL_TEXTURE30);
 				glBindTexture(GL_TEXTURE_2D, this->texture);
@@ -110,7 +113,7 @@ public:
 			}
 		}
 		glEnable(GL_CULL_FACE);
-		// Don't forget to reset to default blending mode
+		glEnable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 private:
@@ -153,7 +156,9 @@ private:
 		particle.Position = objectPos + glm::vec3(randomX, randomY, randomZ);
 		particle.Color = glm::vec4(1.0f);
 		particle.Life = particleLife;
-		particle.Velocity = 0.1f * (1.5f * objectVel + glm::normalize(glm::vec3(randomX, randomY, randomZ)));
+		particle.angleX = (rand() % 3600) / 10.0f;
+		particle.angleY = (rand() % 3600) / 10.0f;
+		particle.Velocity = 0.04f * (1.3f * objectVel + glm::normalize(glm::vec3(randomX, randomY, randomZ)));
 	}
 };
 
