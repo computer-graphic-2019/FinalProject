@@ -81,7 +81,7 @@ public:
 	void Draw(glm::mat4 view, glm::mat4 projection)
 	{
 		// Use additive blending to give it a 'glow' effect
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		this->shader->use();
 		for (Particle particle : this->particles)
 		{
@@ -100,7 +100,7 @@ public:
 			}
 		}
 		// Don't forget to reset to default blending mode
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 private:
 	// State
@@ -140,7 +140,7 @@ private:
 		GLfloat randomY = ((rand() % 200) - 100) / 100.0f * radius;
 		GLfloat randomZ = ((rand() % 200) - 100) / 100.0f * radius;
 		GLfloat init_color = 0.8 + ((rand() % 40) / 200.0f);
-		particle.Position = objectPos + glm::vec3(randomX, randomY, randomZ) + offset;
+		particle.Position = objectPos /*+ glm::vec3(randomX, randomY, randomZ) + offset*/;
 		particle.Color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		particle.Life = 1.0f;
 		particle.Velocity = objectVel;

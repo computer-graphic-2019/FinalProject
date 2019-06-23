@@ -87,7 +87,7 @@ public:
 		ResM.loadModel("bullet", "./models/bullet/bullet.obj");
 
 		// 加载贴图
-		ResM.loadTexture("fire", "./img/particle/fire.png");
+		ResM.loadTexture("fire", "./img/particle/smoke.png");
 
 		// 初始化阴影贴图
 		SHADOW_WIDTH = 4096;
