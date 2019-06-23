@@ -73,9 +73,10 @@ public:
 		ResM.loadShader("textShader", "./ShaderCode/5.text_loading.vs", "./ShaderCode/5.text_loading.fs");
 		ResM.loadShader("particleShader", "./ShaderCode/1.particle_shader.vs", "./ShaderCode/1.particle_shader.fs");
 		ResM.loadShader("hdrShader", "./ShaderCode/hdr.vs", "./ShaderCode/hdr.fs");
+		ResM.loadShader("normal", "./ShaderCode/normal.vs", "./ShaderCode/normal.fs");
 
 		// 加载模型
-		ResM.loadModel("place", "./models/place/scene2.obj");
+		ResM.loadModel("place", "./models/place/scene1.obj");
 		ResM.loadModel("target", "./models/target/target1.obj");
 		ResM.loadModel("explodeTarget", "./models/explodeTarget/explodeTarget.obj");
 		ResM.loadModel("tree", "./models/scene/tree.obj");
@@ -87,8 +88,12 @@ public:
 		ResM.loadModel("gunOnFire", "./models/gun/m24OnFire.obj");
 		ResM.loadModel("bullet", "./models/bullet/bullet.obj");
 
+		ResM.loadModel("box", "./models/scene/box.obj");
+
 		// 加载贴图
 		ResM.loadTexture("fire", "./img/particle/smoke.png");
+		ResM.loadTexture("normalWall", "./img/wall/brickwall_normal.jpg");
+		ResM.loadTexture("wall", "./img/wall/brickwall.jpg");
 
 		// 初始化阴影贴图
 		SHADOW_WIDTH = 4096;
@@ -330,6 +335,7 @@ public:
 		glClear(GL_DEPTH_BUFFER_BIT);
 		// render
 		RenderObject(shader);
+		RenderBox(shader);
 
 		// 实例化数组阴影
 		shader = ResM.getShader("instancingDepthShader");
@@ -392,7 +398,42 @@ public:
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		RenderInstances(shader);
 
+		//法线贴图
+		shader = ResM.getShader("normal");
+		shader->use();
+		shader->setInt("shadowMap", 31);
+		shader->setInt("diffuseMap", 30);
+		shader->setInt("normalMap", 29);
+		shader->setMat4("view", view);
+		shader->setMat4("projection", projection);
+		shader->setVec3("viewPos", viewPos);
+		shader->setVec3("lightPos", lightPos);
+		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+		shader->setVec3("light.ambient", ambient_light);
+		shader->setVec3("light.diffuse", diffuse_light);
+		shader->setVec3("light.specular", specular_light);
+		shader->setVec3("light.position", lightPos);
+
+		// render
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		glActiveTexture(GL_TEXTURE31);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glActiveTexture(GL_TEXTURE30);
+		glBindTexture(GL_TEXTURE_2D, ResM.getTexture("wall")->getTexture());
+		glActiveTexture(GL_TEXTURE29);
+		glBindTexture(GL_TEXTURE_2D, ResM.getTexture("normalWall")->getTexture());
+		RenderBox(shader);
+
 		fireParticle.Draw(view, projection);
+	}
+
+	//渲染楼梯
+	void RenderBox(Shader* shader) {
+		glm::mat4 model = glm::mat4(1.0f);
+		shader->setMat4("model", model);
+		ResM.getModel("box")->Draw(*shader);
 	}
 
 	// 渲染所有物体
