@@ -434,35 +434,33 @@ public:
 
 	// 渲染实例
 	void RenderInstances(Shader* shader) {
-		shader->setInt("texture_diffuse1", 0);
-		glActiveTexture(GL_TEXTURE0);
 
 		// 两种树
-		glBindTexture(GL_TEXTURE_2D, ResM.getModel("tree")->textures_loaded[0].id);
 		for (unsigned int i = 0; i < ResM.getModel("tree")->meshes.size(); i++) {
+			ResM.getModel("tree")->DrawTexture(i, *shader);
 			glBindVertexArray(ResM.getModel("tree")->meshes[i].VAO);
 			glDrawElementsInstanced(GL_TRIANGLES, ResM.getModel("tree")->meshes[i].indices.size(), GL_UNSIGNED_INT, 0, numOfTree);
 			glBindVertexArray(0);
 		}
 
-		glBindTexture(GL_TEXTURE_2D, ResM.getModel("tree3")->textures_loaded[0].id);
 		for (unsigned int i = 0; i < ResM.getModel("tree3")->meshes.size(); i++) {
+			ResM.getModel("tree3")->DrawTexture(i, *shader);
 			glBindVertexArray(ResM.getModel("tree3")->meshes[i].VAO);
 			glDrawElementsInstanced(GL_TRIANGLES, ResM.getModel("tree3")->meshes[i].indices.size(), GL_UNSIGNED_INT, 0, numOfTree3);
 			glBindVertexArray(0);
 		}
 
 		// 草
-		glBindTexture(GL_TEXTURE_2D, ResM.getModel("grass")->textures_loaded[0].id);
 		for (unsigned int i = 0; i < ResM.getModel("grass")->meshes.size(); i++) {
+			ResM.getModel("grass")->DrawTexture(i, *shader);
 			glBindVertexArray(ResM.getModel("grass")->meshes[i].VAO);
 			glDrawElementsInstanced(GL_TRIANGLES, ResM.getModel("grass")->meshes[i].indices.size(), GL_UNSIGNED_INT, 0, numOfGrass);
 			glBindVertexArray(0);
 		}
 
 		// 石头
-		glBindTexture(GL_TEXTURE_2D, ResM.getModel("stone")->textures_loaded[0].id);
 		for (unsigned int i = 0; i < ResM.getModel("stone")->meshes.size(); i++) {
+			ResM.getModel("stone")->DrawTexture(i, *shader);
 			glBindVertexArray(ResM.getModel("stone")->meshes[i].VAO);
 			glDrawElementsInstanced(GL_TRIANGLES, ResM.getModel("stone")->meshes[i].indices.size(), GL_UNSIGNED_INT, 0, numOfStone);
 			glBindVertexArray(0);
