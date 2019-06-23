@@ -13,6 +13,7 @@
 #include "GameMove.h"
 #include "SkyBox.h"
 #include "GameShoot.h"
+#include "Particle.h"
 
 #include "PhysicsEngine.h"
 
@@ -54,6 +55,9 @@ private:
 	std::vector<glm::mat4> stoneModelMatrices;
 
 public:
+	// particle
+	ParticleSystem fireParticle;
+
 	GameTools(glm::vec3 light, float ambient, float diffuse, float specular) {
 		// 初始化光照参数
 		this->ambient_light = ambient * light;
@@ -62,11 +66,12 @@ public:
 
 		// 加载着色器
 		ResM.loadShader("debug", "./ShaderCode/debug.vs", "./ShaderCode/debug.fs");
-		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs", "./ShaderCode/4.depth_explode_shading.gs");
+		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs");
 		ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs", "./ShaderCode/4.explode_shading.gs");
 		ResM.loadShader("instancingModel", "./ShaderCode/instancing_phong_shading.vs", "./ShaderCode/instancing_phong_shading.fs");
 		ResM.loadShader("instancingDepthShader", "./ShaderCode/instancing_depth_mapping.vs", "./ShaderCode/instancing_depth_mapping.fs");
 		ResM.loadShader("textShader", "./ShaderCode/5.text_loading.vs", "./ShaderCode/5.text_loading.fs");
+		ResM.loadShader("particleShader", "./ShaderCode/1.particle_shader.vs", "./ShaderCode/1.particle_shader.fs");
 
 		// 加载模型
 		ResM.loadModel("place", "./models/place/scene2.obj");
@@ -80,6 +85,9 @@ public:
 		ResM.loadModel("gun", "./models/gun/m24.obj");
 		ResM.loadModel("gunOnFire", "./models/gun/m24OnFire.obj");
 		ResM.loadModel("bullet", "./models/bullet/bullet.obj");
+
+		// 加载贴图
+		ResM.loadTexture("fire", "./img/particle/fire.png");
 
 		// 初始化阴影贴图
 		SHADOW_WIDTH = 4096;
@@ -191,6 +199,9 @@ public:
 			glm::vec3(platform.x + 44.0f, platform.y + 10.0f, platform.z + 18.0f));
 
 		ConfigureInstancedArray();
+
+		// 火焰粒子
+		this->fireParticle.init(ResM.getShader("particleShader"), ResM.getTexture("fire")->getTexture(), 500);
 	}
 
 	void ConfigureInstancedArray() {
@@ -304,12 +315,10 @@ public:
 		glm::mat4 lightProjection = glm::ortho(-120.0f, 120.0f, -120.0f, 120.0f, 0.0f, 300.0f);
 		lightSpaceMatrix = lightProjection * lightView;
 		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-		shader->setBool("isExplode", false);
 		// clear
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glCullFace(GL_FRONT);
 		// render
 		RenderObject(shader);
 
@@ -317,9 +326,8 @@ public:
 		shader = ResM.getShader("instancingDepthShader");
 		shader->use();
 		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
 		RenderInstances(shader);
-		glCullFace(GL_BACK);
+		// 解绑FrameBuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
@@ -374,6 +382,8 @@ public:
 		glActiveTexture(GL_TEXTURE31);
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		RenderInstances(shader);
+
+		fireParticle.Draw(view, projection);
 	}
 
 	// 渲染所有物体
