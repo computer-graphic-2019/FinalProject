@@ -6,7 +6,7 @@ extern GameMove moveController;
 extern PhysicsEngine physicsEngine;
 
 GameMove::GameMove() {
-	this->humanCamera = new Camera(glm::vec3(-30.0f, 5.0f, 0.0f));
+	this->humanCamera = new Camera(glm::vec3(-50.0f, 5.0f, 0.0f));
 	this->humanCamera->setSpeed(10.0f, 0.5f);
 }
 

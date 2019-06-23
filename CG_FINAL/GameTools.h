@@ -13,6 +13,7 @@
 #include "GameMove.h"
 #include "SkyBox.h"
 #include "GameShoot.h"
+#include "Particle.h"
 
 #include "PhysicsEngine.h"
 
@@ -54,6 +55,9 @@ private:
 	std::vector<glm::mat4> stoneModelMatrices;
 
 public:
+	// particle
+	ParticleSystem fireParticle;
+
 	GameTools(glm::vec3 light, float ambient, float diffuse, float specular) {
 		// 初始化光照参数
 		this->ambient_light = ambient * light;
@@ -62,16 +66,17 @@ public:
 
 		// 加载着色器
 		ResM.loadShader("debug", "./ShaderCode/debug.vs", "./ShaderCode/debug.fs");
-		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs");
+		ResM.loadShader("depthShader", "./ShaderCode/3.depth_mapping.vs", "./ShaderCode/3.depth_mapping.fs", "./ShaderCode/4.depth_explode_shading.gs");
 		ResM.loadShader("model", "./ShaderCode/3.phong_shading.vs", "./ShaderCode/3.phong_shading.fs", "./ShaderCode/4.explode_shading.gs");
 		ResM.loadShader("instancingModel", "./ShaderCode/instancing_phong_shading.vs", "./ShaderCode/instancing_phong_shading.fs");
 		ResM.loadShader("instancingDepthShader", "./ShaderCode/instancing_depth_mapping.vs", "./ShaderCode/instancing_depth_mapping.fs");
 		ResM.loadShader("textShader", "./ShaderCode/5.text_loading.vs", "./ShaderCode/5.text_loading.fs");
+		ResM.loadShader("particleShader", "./ShaderCode/1.particle_shader.vs", "./ShaderCode/1.particle_shader.fs");
 		ResM.loadShader("hdrShader", "./ShaderCode/hdr.vs", "./ShaderCode/hdr.fs");
 
 		// 加载模型
 		ResM.loadModel("place", "./models/place/scene2.obj");
-		ResM.loadModel("target", "./models/target/target.obj");
+		ResM.loadModel("target", "./models/target/target1.obj");
 		ResM.loadModel("explodeTarget", "./models/explodeTarget/explodeTarget.obj");
 		ResM.loadModel("tree", "./models/scene/tree.obj");
 		ResM.loadModel("tree3", "./models/scene/tree3.obj");
@@ -81,6 +86,9 @@ public:
 		ResM.loadModel("gun", "./models/gun/m24.obj");
 		ResM.loadModel("gunOnFire", "./models/gun/m24OnFire.obj");
 		ResM.loadModel("bullet", "./models/bullet/bullet.obj");
+
+		// 加载贴图
+		ResM.loadTexture("fire", "./img/particle/smoke.png");
 
 		// 初始化阴影贴图
 		SHADOW_WIDTH = 4096;
@@ -154,15 +162,20 @@ public:
 		for (int i = 0; i < numOfTarget; i++) {
 			std::string name = "target";
 			name += ('0' + i);
-			GameObject go(glm::vec3(48.0f, 6.0f, -60.0f + 8 * (i + 1)), glm::vec3(2.0f, 2.0f, 2.0f));
+			glm::vec3 pos(48.0f, 6.0f, -60.0f + 8 * (i + 1));
+			glm::vec3 size(1.0f, 2.2f, 2.2f);
+			GameObject go(pos - size, size * 2.0f);
 			targetList.insert_or_assign(name, go);
 		}
 
 		for (int i = 0; i < numOfExplodeTarget; i++) {
 			std::string name = "target";
 			name += ('0' + i);
-			GameObject go(glm::vec3(48.0f, 26.0f, -20.0f + 8 * (i + 1)), glm::vec3(2.0f, 2.0f, 2.0f));
+			glm::vec3 pos(48.0f, 26.0f, -20.0f + 8 * (i + 1));
+			glm::vec3 size(1.0f, 1.0f, 1.0f);
+			GameObject go(pos - size, size * 2.0f);
 			explodeTargeList.insert_or_assign(name, go);
+			explodeTargeRec.insert_or_assign(name, false);
 		}
 
 		for (int i = 0; i < numOfMovingTarget; i++) {
@@ -195,6 +208,9 @@ public:
 			glm::vec3(platform.x + 44.0f, platform.y + 10.0f, platform.z + 18.0f));
 
 		ConfigureInstancedArray();
+
+		// 火焰粒子
+		this->fireParticle.init(ResM.getShader("particleShader"), ResM.getTexture("fire")->getTexture(), 500);
 	}
 
 	void ConfigureInstancedArray() {
@@ -320,6 +336,7 @@ public:
 		shader->use();
 		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 		RenderInstances(shader);
+		// 解绑FrameBuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
@@ -374,6 +391,8 @@ public:
 		glActiveTexture(GL_TEXTURE31);
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		RenderInstances(shader);
+
+		fireParticle.Draw(view, projection);
 	}
 
 	// 渲染所有物体
@@ -388,9 +407,8 @@ public:
 		// 固定靶子
 		for (std::map<std::string, GameObject>::iterator ptr = targetList.begin(); ptr != targetList.end(); ptr++) {
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, ptr->second.Position);
-			//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-			model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			model = glm::translate(model, ptr->second.Position + ptr->second.Size * 0.5f);
+			//model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			shader->setMat4("model", model);
 			ResM.getModel("target")->Draw((*shader));
 		}
@@ -399,9 +417,8 @@ public:
 		std::map<std::string, GameObject>::iterator posPtr = explodeTargeList.begin();
 		for (std::map<std::string, bool>::iterator ptr = explodeTargeRec.begin(); posPtr != explodeTargeList.end() && ptr != explodeTargeRec.end(); ptr++, posPtr++) {
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, posPtr->second.Position);
-			//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-			model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			model = glm::translate(model, posPtr->second.Position + posPtr->second.Size * 0.5f);
+			//model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			shader->setMat4("model", model);
 			if (ptr->second) {
 				shader->setBool("isExplode", true);
