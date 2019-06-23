@@ -10,6 +10,9 @@
 #include "Shader.h"
 #include "Texture.h"
 
+float particleLife = 1.0;
+float radius = 0.02;
+
 struct Particle {
 	glm::vec3 Position, Velocity;
 	glm::vec4 Color;
@@ -57,13 +60,13 @@ public:
 		}	
 	}
 	// Update all particles
-	void Update(GLfloat dt, glm::vec3 objectPos, glm::vec3 objectVel, GLuint newParticles, glm::vec3 offset)
+	void Update(GLfloat dt, glm::vec3 objectPos, glm::vec3 objectVel, GLuint newParticles)
 	{
 		// Add new particles 
 		for (GLuint i = 0; i < newParticles; ++i)
 		{
 			int unusedParticle = this->firstUnusedParticle();
-			this->respawnParticle(this->particles[unusedParticle], objectPos, objectVel, offset);
+			this->respawnParticle(this->particles[unusedParticle], objectPos, objectVel);
 		}
 		// Update all particles
 		for (GLuint i = 0; i < this->amount; ++i)
@@ -73,7 +76,13 @@ public:
 			if (p.Life > 0.0f)
 			{
 				p.Position += p.Velocity * dt;
-				p.Color.g += dt * 1.5;
+				if (p.Color.b > 0.0f) {
+					p.Color.b -= 2 * dt;
+				}
+				else {
+					p.Color.g -= 2 * dt;
+				}
+				p.Color.a -= 0.5f * dt;
 			}
 		}
 	}
@@ -81,7 +90,7 @@ public:
 	void Draw(glm::mat4 view, glm::mat4 projection)
 	{
 		// Use additive blending to give it a 'glow' effect
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		this->shader->use();
 		glDisable(GL_CULL_FACE);
 		for (Particle particle : this->particles)
@@ -102,7 +111,7 @@ public:
 		}
 		glEnable(GL_CULL_FACE);
 		// Don't forget to reset to default blending mode
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 private:
 	// State
@@ -135,17 +144,16 @@ private:
 		return 0;
 	}
 	// Respawns particle
-	void respawnParticle(Particle &particle, glm::vec3 objectPos, glm::vec3 objectVel, glm::vec3 offset)
+	void respawnParticle(Particle &particle, glm::vec3 objectPos, glm::vec3 objectVel)
 	{
-		int radius = 1;
 		GLfloat randomX = ((rand() % 200) - 100) / 100.0f * radius;
 		GLfloat randomY = ((rand() % 200) - 100) / 100.0f * radius;
 		GLfloat randomZ = ((rand() % 200) - 100) / 100.0f * radius;
-		GLfloat init_color = 0.8 + ((rand() % 40) / 200.0f);
-		particle.Position = objectPos /*+ glm::vec3(randomX, randomY, randomZ) + offset*/;
-		particle.Color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-		particle.Life = 1.0f;
-		particle.Velocity = objectVel;
+		//GLfloat init_color = 0.8 + ((rand() % 40) / 200.0f);
+		particle.Position = objectPos + glm::vec3(randomX, randomY, randomZ);
+		particle.Color = glm::vec4(1.0f);
+		particle.Life = particleLife;
+		particle.Velocity = 0.1f * (1.5f * objectVel + glm::normalize(glm::vec3(randomX, randomY, randomZ)));
 	}
 };
 

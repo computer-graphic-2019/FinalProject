@@ -210,7 +210,7 @@ public:
 		ConfigureInstancedArray();
 
 		// 火焰粒子
-		this->fireParticle.init(ResM.getShader("particleShader"), ResM.getTexture("fire")->getTexture(), 500);
+		this->fireParticle.init(ResM.getShader("particleShader"), ResM.getTexture("fire")->getTexture(), 10000);
 	}
 
 	void ConfigureInstancedArray() {

@@ -129,7 +129,7 @@ int main()
 		glm::vec3 lightPos(200 * cos(time), 200 * sin(time), 1.0);
 
 		// update
-		director.fireParticle.Update(deltaTime, glm::vec3(-60.0f, 5.0f, 0.0f), glm::vec3(0.0f,1.0f,0.0f), 5, glm::vec3(0.0f));
+		director.fireParticle.Update(deltaTime, glm::vec3(-55.0f, 5.0f, 0.0f), glm::vec3(0.0f,1.0f,0.0f), 50);
 		// render skybox
 		skybox.renderSkyBox(time);
 		// render scene
