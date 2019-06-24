@@ -145,7 +145,7 @@ public:
 			if (z > 0) z += 20;
 			else z -= 20;
 			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(x, 0.0f, z));
+			model = glm::translate(model, glm::vec3(x, -1.0f, z));
 			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
 			grassModelMatrices.push_back(model);
 			//physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, 2.0f, z - 2.0f), glm::vec3(x + 2.0f, 2.0f, z + 2.0f));
@@ -211,6 +211,11 @@ public:
 		glm::vec3 platform(16.0f, 10.0f, 0.0f);
 		physicsEngine.setSceneInnerBoundary(glm::vec3(platform.x - 44.0f, platform.y - 10.0f, platform.z - 18.0f), 
 			glm::vec3(platform.x + 44.0f, platform.y + 10.0f, platform.z + 18.0f));
+
+		// 火焰平台
+		glm::vec3 firePos(-23.0f, 22.0f, 0.0f);
+		physicsEngine.setSceneInnerBoundary(glm::vec3(firePos.x - 0.5f, firePos.y - 18.0f, firePos.z - 0.5f),
+			glm::vec3(firePos.x + 0.5f, firePos.y + 18.0f, firePos.z + 0.5f));
 
 		ConfigureInstancedArray();
 

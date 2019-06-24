@@ -18,8 +18,8 @@ const float GravityAcceler = -9.8f;
 
 const float BoundaryGap = 1.0f;          //碰撞间距
 const float JumpInitialSpeed = 12.0f;    //起跳初速度
-const float JumpFactor = 0.05f;          //跳起速度系数
-const float GravityFactor = 0.05f;       //下落速度系数
+const float JumpFactor = 0.08f;          //跳起速度系数
+const float GravityFactor = 0.08f;       //下落速度系数
 
 class PhysicsEngine {
 public:
@@ -218,7 +218,7 @@ private:
 	//空间外部边缘碰撞检测
 	void outCollisionTestXZ(glm::vec2 obj1, glm::vec2 obj2, glm::vec3& cameraPos, glm::vec3& targetPos) {
 		
-		const float collisionThres = 0.23f;
+		const float collisionThres = 0.5f;
 
 		//先设置包围盒：比空间外部边缘小一点
 		obj1.x += obj1.x < 0 ? 2 : -2;

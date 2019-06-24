@@ -145,7 +145,7 @@ public:
 
 	void HandleHoriMove(MOVE_DIRECTION direction, float deltaTime) {
 		float dx = 0, dz = 0;
-		float cameraSpeed = this->MovementSpeed * 0.02;// * deltaTime;
+		float cameraSpeed = this->MovementSpeed * 0.04;// * deltaTime;
 		if (direction == UP) {
 			dz += cameraSpeed;
 		}
@@ -165,7 +165,7 @@ public:
 			glm::vec3 strafe = glm::vec3(this->cameraRight.x, 0.0f, this->cameraRight.z);
 
 			cameraPos += (dz * forward + dx * strafe);
-			targetPos = cameraPos + (dz * forward + dx * strafe) * 2.0f;
+			targetPos = cameraPos + (dz * forward + dx * strafe) * 1.5f;
 
 			//每次做完坐标变换后，先进行碰撞检测来调整坐标
 			physicsEngine.outCollisionTest(cameraPos, targetPos);
