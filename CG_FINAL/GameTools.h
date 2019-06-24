@@ -30,8 +30,8 @@ extern std::map<std::string, GameObject> explodeTargeList;
 extern std::map<std::string, bool> explodeTargeRec;
 extern std::deque<std::string> recoverList;
 
-int numOfTree = 3;
-int numOfTree3 = 7;
+int numOfTree = 8;
+int numOfTree3 = 16;
 int numOfGrass = 200;
 int numOfStone = 100;
 int numOfTarget = 4;
@@ -116,22 +116,33 @@ public:
 		srand(1561273370); // initialize random seed	
 		// 随机位置参数
 		for (int i = 0; i < numOfTree; i++) {
-			int x = rand() % (2 * coveLength) - coveLength;
-			int z = rand() % (2 * coverWidth) - coverWidth;
-			if (z > 0) z += 20;
-			else z -= 20;
-			float scale = rand() % 20 / (float)40 + 1.0;
+			int x = 56;
+			int z = 0;
+			if (i < numOfTree/2) {
+				z = 60 - 9 * (i+1);
+			}
+			else {
+				z = -60 + 9 * (i- numOfTree/2 + 1);
+			}
+			float scale = rand() % 20 / (float)40 + 0.9;
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(x, 0.0f, z));
 			model = glm::scale(model, glm::vec3(scale, scale, scale));
 			treeModelMatrices.push_back(model);
 			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 4.0f, -10.0f, z - 4.0f), glm::vec3(x + 4.0f, 10.0f, z + 4.0f));
 		}
+		
 		for (int i = 0; i < numOfTree3; i++) {
-			int x = rand() % (2 * coveLength) - coveLength;
-			int z = rand() % (2 * coverWidth) - coverWidth;
-			if (z > 0) z += 20;
-			else z -= 20;
+			int x = 0;
+			int z = -56;
+			if (i < numOfTree3 / 2) {
+				z = -56;
+				x = -60 + 12 * (i + 1);
+			}
+			else {
+				z = 56;
+				x = -60 + 12 * (i - numOfTree3 / 2 + 1);
+			}
 			float scale = rand() % 20 / (float)40 + 1.0;
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(x, 0.0f, z));
@@ -139,11 +150,12 @@ public:
 			tree3ModelMatrices.push_back(model);
 			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 2.0f, -8.0f, z - 2.0f), glm::vec3(x + 2.0f, 8.0f, z + 2.0f));
 		}
+
 		for (int i = 0; i < numOfGrass; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
-			if (z > 0) z += 20;
-			else z -= 20;
+			if (z > 0) z += 21;
+			else z -= 21;
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(x, -1.0f, z));
 			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
@@ -154,7 +166,7 @@ public:
 		for (int i = 0; i < numOfStone; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
-			if (z > 0) z += 20;
+			if (z > 0) z += 21;
 			else z -= 20;
 			float scale = rand() % 20 / (float)40 + 1.0;
 			glm::mat4 model = glm::mat4(1.0f);
@@ -164,13 +176,23 @@ public:
 		}
 
 		// 设置靶子位置
-		for (int i = 0; i < numOfTarget; i++) {
+		for (int i = 0; i < numOfTarget * 2; i++) {
 			std::string name = "target";
 			name += ('0' + i);
-			glm::vec3 pos(48.0f, 6.0f, -60.0f + 8 * (i + 1));
-			glm::vec3 size(1.0f, 2.2f, 2.2f);
-			GameObject go(pos - size, size * 2.0f);
-			targetList.insert_or_assign(name, go);
+			if (i < numOfTarget) {
+				glm::vec3 pos(48.0f, 6.0f, -60.0f + 8 * (i + 1));
+				glm::vec3 size(1.0f, 2.2f, 2.2f);
+				GameObject go(pos - size, size * 2.0f);
+				targetList.insert_or_assign(name, go);
+				physicsEngine.setSceneInnerBoundary(pos - size, pos + size);
+			}
+			else {
+				glm::vec3 pos(48.0f, 6.0f, 60.0f - 8 * ((i - numOfTarget) + 1));
+				glm::vec3 size(1.0f, 2.2f, 2.2f);
+				GameObject go(pos - size, size * 2.0f);
+				targetList.insert_or_assign(name, go);
+				physicsEngine.setSceneInnerBoundary(pos - size, pos + size);
+			}		
 		}
 
 		for (int i = 0; i < numOfExplodeTarget; i++) {
@@ -181,6 +203,7 @@ public:
 			GameObject go(pos - size, size * 2.0f);
 			explodeTargeList.insert_or_assign(name, go);
 			explodeTargeRec.insert_or_assign(name, false);
+			physicsEngine.setSceneInnerBoundary(pos - size, pos + size);
 		}
 
 		for (int i = 0; i < numOfMovingTarget; i++) {
