@@ -14,5 +14,5 @@ void main()
 {
     TexCoords = texCoords;
     ParticleColor = color;
-    gl_Position = projection * view * model * vec4(position * 0.02, 1.0f);
+    gl_Position = projection * view * model * vec4(position * 0.2, 1.0f);
 }

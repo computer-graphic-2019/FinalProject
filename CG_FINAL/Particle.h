@@ -11,7 +11,7 @@
 #include "Texture.h"
 
 float particleLife = 2.0;
-float radius = 0.02;
+float radius = 0.2;
 
 struct Particle {
 	glm::vec3 Position, Velocity;
@@ -90,7 +90,7 @@ public:
 	{
 		this->shader->use();
 		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST);
+		glDepthFunc(GL_ALWAYS);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		for (Particle particle : this->particles)
 		{
@@ -113,7 +113,7 @@ public:
 			}
 		}
 		glEnable(GL_CULL_FACE);
-		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 private:
@@ -158,7 +158,7 @@ private:
 		particle.Life = particleLife;
 		particle.angleX = (rand() % 3600) / 10.0f;
 		particle.angleY = (rand() % 3600) / 10.0f;
-		particle.Velocity = 0.04f * (1.3f * objectVel + glm::normalize(glm::vec3(randomX, randomY, randomZ)));
+		particle.Velocity = 0.4f * (1.3f * objectVel + glm::normalize(glm::vec3(randomX, randomY, randomZ)));
 	}
 };
 

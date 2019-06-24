@@ -350,18 +350,19 @@ public:
 
 	// 深度贴图
 	void RenderDepthMap(glm::vec3 lightPos) {
-		// bind data
-		Shader* shader = ResM.getShader("depthShader");
-		shader->use();
-		glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-		glm::mat4 lightProjection = glm::ortho(-120.0f, 120.0f, -120.0f, 120.0f, 0.0f, 300.0f);
-		lightSpaceMatrix = lightProjection * lightView;
-		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-		// clear
+		// config
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		// render
+		glCullFace(GL_FRONT);
+		// 参数
+		glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+		glm::mat4 lightProjection = glm::ortho(-120.0f, 120.0f, -120.0f, 120.0f, 0.0f, 300.0f);
+		// 渲染
+		Shader* shader = ResM.getShader("depthShader");
+		shader->use();
+		lightSpaceMatrix = lightProjection * lightView;
+		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 		RenderObject(shader);
 		RenderBox(shader);
 
@@ -376,31 +377,29 @@ public:
 
 	// 实际场景
 	void RenderScene(glm::vec3 lightPos) {
-		// bind data
-		Shader* shader = ResM.getShader("model");
-		shader->use();
+		// config
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+		glCullFace(GL_BACK);
+		// 参数
 		glm::vec3 viewPos = moveController.getHumanCamera()->getPosition();
 		glm::mat4 view = moveController.getHumanCamera()->getView();
-		glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()), 
-												(float)SCR_WIDTH / (float)SCR_HEIGHT, 
-												0.1f, 3000.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(moveController.getHumanCamera()->getZoom()),
+			(float)SCR_WIDTH / (float)SCR_HEIGHT,
+			0.1f, 3000.0f);
+
+		// 渲染场景
+		Shader* shader = ResM.getShader("model");
+		shader->use();
 		shader->setInt("shadowMap", 31);
 		shader->setMat4("view", view);
 		shader->setMat4("projection", projection);
 		shader->setVec3("viewPos", viewPos);
 		shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
 		shader->setVec3("light.ambient", ambient_light);
 		shader->setVec3("light.diffuse", diffuse_light);
 		shader->setVec3("light.specular", specular_light);
 		shader->setVec3("light.position", lightPos);
-
 		shader->setBool("isExplode", false);
-
-		// clear
-		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-		// render
 		glActiveTexture(GL_TEXTURE31);
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		RenderObject(shader);
@@ -454,6 +453,7 @@ public:
 		glBindTexture(GL_TEXTURE_2D, ResM.getTexture("normalWall")->getTexture());
 		RenderBox(shader);
 
+		// 渲染火焰
 		fireParticle.Draw(view, projection);
 	}
 
