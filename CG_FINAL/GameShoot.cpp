@@ -116,7 +116,7 @@ void GameShoot::CheckCollisionWithTarget() {
 	char score[50];
 	sprintf_s(score, 50, "Score: %d", this->point);
 	std::string res = score;
-	showScore(res, 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+	showScore(res, 25.0f, 25.0f, 1.0f, glm::vec3(1.0f, 0.0f, 0.2f));
 };
 
 // 计算命中得分

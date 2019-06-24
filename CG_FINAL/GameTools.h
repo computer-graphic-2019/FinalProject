@@ -154,8 +154,8 @@ public:
 		for (int i = 0; i < numOfGrass; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
-			if (z > 0) z += 21;
-			else z -= 21;
+			if (z > 0) z += 22;
+			else z -= 22;
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(x, -1.0f, z));
 			model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
@@ -166,8 +166,8 @@ public:
 		for (int i = 0; i < numOfStone; i++) {
 			int x = rand() % (2 * coveLength) - coveLength;
 			int z = rand() % (2 * coverWidth) - coverWidth;
-			if (z > 0) z += 21;
-			else z -= 20;
+			if (z > 0) z += 22;
+			else z -= 22;
 			float scale = rand() % 20 / (float)40 + 1.0;
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(x, 0.0f, z));
@@ -218,27 +218,27 @@ public:
 		// 阶梯
 		int x = -34, z = -16, y = 1;
 		for (int i = 0; i < 4; i++) {
-			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 6.0f, y - 5.0f, z - 2.0f), glm::vec3(x + 6.0f, y + 1.0f, z + 2.0f));
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 6.0f, y - 20.0f, z - 2.0f), glm::vec3(x + 6.0f, y + 1.0f, z + 2.0f));
 			z += 5;
 			y += 6;
 		}
 		z = 16;
 		y = 1;
 		for (int i = 0; i < 4; i++) {
-			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 6.0f, y - 5.0f, z - 2.0f), glm::vec3(x + 6.0f, y + 1.0f, z + 2.0f));
+			physicsEngine.setSceneInnerBoundary(glm::vec3(x - 6.0f, y - 20.0f, z - 2.0f), glm::vec3(x + 6.0f, y + 1.0f, z + 2.0f));
 			z -= 5;
 			y += 6;
 		}
 
 		// 中部平台
 		glm::vec3 platform(16.0f, 10.0f, 0.0f);
-		physicsEngine.setSceneInnerBoundary(glm::vec3(platform.x - 44.0f, platform.y - 10.0f, platform.z - 18.0f), 
-			glm::vec3(platform.x + 44.0f, platform.y + 10.0f, platform.z + 18.0f));
+		glm::vec3 size(44.5f, 10.5f, 18.5f);
+		physicsEngine.setSceneInnerBoundary(platform-size, platform+size);
 
 		// 火焰平台
 		glm::vec3 firePos(-23.0f, 22.0f, 0.0f);
-		physicsEngine.setSceneInnerBoundary(glm::vec3(firePos.x - 0.5f, firePos.y - 18.0f, firePos.z - 0.5f),
-			glm::vec3(firePos.x + 0.5f, firePos.y + 18.0f, firePos.z + 0.5f));
+		size = glm::vec3(0.5f, 18.0f, 0.5f);
+		physicsEngine.setSceneInnerBoundary(firePos-size, firePos+size);
 
 		ConfigureInstancedArray();
 
