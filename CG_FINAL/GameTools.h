@@ -387,6 +387,9 @@ public:
 			(float)SCR_WIDTH / (float)SCR_HEIGHT,
 			0.1f, 3000.0f);
 
+		// 渲染火焰
+		fireParticle.Draw(view, projection);
+
 		// 渲染场景
 		Shader* shader = ResM.getShader("model");
 		shader->use();
@@ -452,9 +455,6 @@ public:
 		glActiveTexture(GL_TEXTURE29);
 		glBindTexture(GL_TEXTURE_2D, ResM.getTexture("normalWall")->getTexture());
 		RenderBox(shader);
-
-		// 渲染火焰
-		fireParticle.Draw(view, projection);
 	}
 
 	//渲染楼梯
