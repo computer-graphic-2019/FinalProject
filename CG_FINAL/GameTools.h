@@ -354,7 +354,8 @@ public:
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glCullFace(GL_FRONT);
+		glDisable(GL_CULL_FACE);
+		//glCullFace(GL_FRONT);
 		// 参数
 		glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 		glm::mat4 lightProjection = glm::ortho(-120.0f, 120.0f, -120.0f, 120.0f, 0.0f, 300.0f);
@@ -373,6 +374,7 @@ public:
 		RenderInstances(shader);
 		// 解绑FrameBuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glEnable(GL_CULL_FACE);
 	}
 
 	// 实际场景
