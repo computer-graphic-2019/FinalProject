@@ -232,7 +232,7 @@ public:
 
 		// 中部平台
 		glm::vec3 platform(16.0f, 10.0f, 0.0f);
-		glm::vec3 size(44.5f, 10.5f, 18.5f);
+		glm::vec3 size(44.5f, 10.0f, 18.5f);
 		physicsEngine.setSceneInnerBoundary(platform-size, platform+size);
 
 		// 火焰平台

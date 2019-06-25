@@ -8,8 +8,8 @@
 #include <deque>
 
 // settings
-unsigned int SCR_WIDTH = 800;
-unsigned int SCR_HEIGHT = 600;
+unsigned int SCR_WIDTH = 1280;
+unsigned int SCR_HEIGHT = 960;
 
 // camera
 float lastX = SCR_WIDTH / 2.0f;
